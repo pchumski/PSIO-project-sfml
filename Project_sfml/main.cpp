@@ -1,19 +1,31 @@
 #include <SFML/Graphics.hpp>
+#include <iostream>
 
 int main()
 {
-	sf::RenderWindow window(sf::VideoMode(800, 600), "Not Tetris");
+	sf::RenderWindow window(sf::VideoMode(800, 600), "Not Tetris", sf::Style::Close | sf::Style::Resize);
 
-	sf::Event event;
+	sf::Event evnt;
 
 	while (window.isOpen()) {
 
-		while (window.pollEvent(event)) {
+		while (window.pollEvent(evnt)) {
 
-			if (event.type == sf::Event::Closed) {
+			switch (evnt.type) {
+
+			case sf::Event::Closed:
+				window.close();
+				break;
+			case sf::Event::Resized:  
+				std::cout << "New window width: "<<  evnt.size.width << " New window height: " << evnt.size.height << std::endl;
+				break;
+			}
+
+
+			/*if (evnt.type == sf::Event::Closed) {
 
 				window.close();
-			}
+			}*/
 		}
 	}
 
