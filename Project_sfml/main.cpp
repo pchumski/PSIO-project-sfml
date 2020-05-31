@@ -1,23 +1,27 @@
 #include <SFML/Graphics.hpp>
 #include <iostream>
+#include "Animation.h"
 
 int main()
 {
 	sf::RenderWindow window(sf::VideoMode(800, 600), "Not Tetris", sf::Style::Close | sf::Style::Resize);
-
-	sf::Event evnt;
 	sf::RectangleShape player(sf::Vector2f(100.0f, 100.0f));
-	/*player.setFillColor(sf::Color::Red);
-	player.setOrigin(50.0f, 50.0f);*/
-
 	player.setPosition(200.0f, 200.0f);
 	sf::Texture playerTexture;
-	playerTexture.loadFromFile("platformChar_idle.png");
+	playerTexture.loadFromFile("tux_from_linux.png");
 	player.setTexture(&playerTexture);
+
+	Animation animation(&playerTexture, sf::Vector2u(3, 9), 0.3f);
+
+	float deltaTime = 0.0f;
+	sf::Clock clock;
 
 
 	while (window.isOpen()) {
 
+		deltaTime = clock.restart().asSeconds();
+
+		sf::Event evnt;
 		while (window.pollEvent(evnt)) {
 
 			switch (evnt.type) {
@@ -33,11 +37,7 @@ int main()
 
 					printf("%c", evnt.text.unicode);
 				}*/
-			}
-			/*if (evnt.type == sf::Event::Closed) {
-
-				window.close();
-			}*/			
+			}			
 		}
 
 		/*if (sf::Mouse::isButtonPressed(sf::Mouse::Left)) {
@@ -46,7 +46,7 @@ int main()
 			player.setPosition((float)mousePos.x, static_cast<float>(mousePos.y));
 		}*/
 
-		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::A)) {
+		/*if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::A)) {
 			player.move(-0.1f, 0.0f);
 		}
 		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::D)) {
@@ -57,8 +57,12 @@ int main()
 		}
 		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::S)) {
 			player.move(0.0f, 0.1f);
-		}
-		window.clear();
+		}*/
+
+		animation.Update(2, deltaTime);
+		player.setTextureRect(animation.uvRect);
+
+		window.clear(sf::Color(150, 150, 150));
 		window.draw(player);
 		window.display();
 	}
