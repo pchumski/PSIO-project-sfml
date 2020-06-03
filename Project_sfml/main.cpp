@@ -18,15 +18,17 @@ int main()
 	sf::View view(sf::Vector2f(0.0f, 0.0f), sf::Vector2f(VIEW_HEIGHT, VIEW_HEIGHT));
 
 	sf::Texture playerTexture;
-	playerTexture.loadFromFile("rycerz.png");
+	playerTexture.loadFromFile("rogue1.png");
 	
-	Player player(&playerTexture, sf::Vector2u(6, 2), 0.4f, 100.0f, 200.0f);
+	Player player(&playerTexture, sf::Vector2u(6, 2), 0.3f, 100.0f, 200.0f);
 
 	std::vector<Platform> platforms;
+	std::vector<Platform> platforms2;
 
 	platforms.push_back(Platform(nullptr, sf::Vector2f(400.0f, 200.0f), sf::Vector2f(500.0f, 200.0f)));
 	platforms.push_back(Platform(nullptr, sf::Vector2f(400.0f, 200.0f), sf::Vector2f(500.0f, 0.0f)));
 	platforms.push_back(Platform(nullptr, sf::Vector2f(1000.0f, 200.0f), sf::Vector2f(500.0f, 500.0f)));
+	platforms2.push_back(Platform(nullptr, sf::Vector2f(50.0f, 50.0f), sf::Vector2f(300.0f, 370.0f)));
 	
 	float deltaTime = 0.0f;
 	sf::Clock clock;
@@ -66,14 +68,20 @@ int main()
 		}*/
 
 		player.Update(deltaTime);
+		window.setFramerateLimit(30);
 		
 		Collider col = player.GetCollider();
 
 		sf::Vector2f direction;
+		sf::Vector2f direction2;
 
 		for(Platform& platform : platforms)
 			if(platform.GetCollider().CheckCollision(col, direction, 1.0f))
 				player.OnCollision(direction);
+
+		for (Platform& platform : platforms2)
+			if (platform.GetCollider().CheckCollision(col, direction2, 0.3f))
+				player.OnCollision(direction2);
 
 		view.setCenter(player.GetPosition());
 
@@ -84,6 +92,9 @@ int main()
 		for (Platform& platform : platforms)
 			platform.Draw(window);
 		
+		for (Platform& platform : platforms2)
+			platform.Draw(window);
+
 		window.display();
 	}
 
