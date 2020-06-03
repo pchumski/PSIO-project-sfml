@@ -21,11 +21,20 @@ Player::~Player()
 void Player::Update(float deltaTime)
 {
 	velocity.x = 0.0f;
-
-	if (sf::Keyboard::isKeyPressed(sf::Keyboard::A))
-		velocity.x -= speed;
-	if (sf::Keyboard::isKeyPressed(sf::Keyboard::D))
-		velocity.x += speed;
+	if (sf::Keyboard::isKeyPressed(sf::Keyboard::LShift))
+	{
+		if (sf::Keyboard::isKeyPressed(sf::Keyboard::A))
+			velocity.x -= speed*3;
+		if (sf::Keyboard::isKeyPressed(sf::Keyboard::D))
+			velocity.x += speed*3;
+	}
+	else
+	{
+		if (sf::Keyboard::isKeyPressed(sf::Keyboard::A))
+			velocity.x -= speed;
+		if (sf::Keyboard::isKeyPressed(sf::Keyboard::D))
+			velocity.x += speed;
+	}
 	
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::W) && canJump)
 	{

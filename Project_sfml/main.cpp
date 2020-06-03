@@ -1,8 +1,10 @@
 #include <SFML/Graphics.hpp>
 #include <iostream>
 #include <vector>
+#include <map>
 #include "Player.h"
 #include "Platform.h"
+#include "Level.h"
 
 static const float VIEW_HEIGHT = 800.0f;
 
@@ -16,9 +18,29 @@ int main()
 {
 	sf::RenderWindow window(sf::VideoMode(800, 800), "Not Tetris", sf::Style::Close | sf::Style::Resize);
 	sf::View view(sf::Vector2f(0.0f, 0.0f), sf::Vector2f(VIEW_HEIGHT, VIEW_HEIGHT));
+	std::map<char, sf::Texture*> GroundTextures;
+
+	sf::Texture *one = new sf::Texture;
+	one->loadFromFile("1.png");
+	GroundTextures['a'] = one;
+
+	one = new sf::Texture;
+	one->loadFromFile("2.png");
+	GroundTextures['b'] = one;
+
+	one = new sf::Texture;
+	one->loadFromFile("3.png");
+	GroundTextures['c'] = one;
+
+	Level level(GroundTextures);
 
 	sf::Texture playerTexture;
 	playerTexture.loadFromFile("rogue2.png");
+
+	sf::Texture background;
+	background.loadFromFile("BG.png");
+	sf::Sprite BackGround;
+	BackGround.setTexture(background);
 	
 	Player player(&playerTexture, sf::Vector2u(6, 3), 0.3f, 100.0f, 200.0f);
 
@@ -84,19 +106,29 @@ int main()
 				player.OnCollision(direction2);
 
 		view.setCenter(player.GetPosition());
+		BackGround.setPosition(view.getCenter().x - 400, view.getCenter().y - 400);
 
-		window.clear(sf::Color(150, 150, 150));
+		window.clear();
+		window.draw(BackGround);
 		window.setView(view);
-		player.Draw(window);
 
 		for (Platform& platform : platforms)
 			platform.Draw(window);
-		
+
 		for (Platform& platform : platforms2)
 			platform.Draw(window);
 
+		for (int i = 0; i < level.Matrix.size(); i++)
+		{
+			for (int j = 0; j < level.Matrix[i].size(); j++)
+			{
+				window.draw(level.Matrix[i][j]);
+			}
+		}
+		player.Draw(window);
+
 		window.display();
 	}
-
+	delete one;
 	return 0;
 }
