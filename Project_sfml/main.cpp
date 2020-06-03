@@ -18,9 +18,9 @@ int main()
 	sf::View view(sf::Vector2f(0.0f, 0.0f), sf::Vector2f(VIEW_HEIGHT, VIEW_HEIGHT));
 
 	sf::Texture playerTexture;
-	playerTexture.loadFromFile("rogue1.png");
+	playerTexture.loadFromFile("rogue2.png");
 	
-	Player player(&playerTexture, sf::Vector2u(6, 2), 0.3f, 100.0f, 200.0f);
+	Player player(&playerTexture, sf::Vector2u(6, 3), 0.3f, 100.0f, 200.0f);
 
 	std::vector<Platform> platforms;
 	std::vector<Platform> platforms2;

@@ -33,15 +33,46 @@ void Player::Update(float deltaTime)
 		velocity.y = -sqrtf(2.0f * 981.0f * jumpHeight);
 	}
 
+	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space) && canJump)
+	{
+		canJump = false;
+		velocity.y = -sqrtf(3.0f * 981.0f * jumpHeight);
+	}
+
 	velocity.y += 981.0f * deltaTime;
 
 	if (velocity.x == 0.0f)
 	{
 		row = 0;
 	}
-	else
+	/*else if (sf::Keyboard::isKeyPressed(sf::Keyboard::W))
+	{
+		row = 2;
+		
+		if (velocity.x > 0.0f)
+		{
+			faceRight = true;
+		}
+		else
+		{
+			faceRight = false;
+		}
+	}*/
+	else if ( canJump == true)
 	{
 		row = 1;
+		if (velocity.x > 0.0f)
+		{
+			faceRight = true;
+		}
+		else
+		{
+			faceRight = false;
+		}
+	}
+	else
+	{
+		row = 2;
 
 		if (velocity.x > 0.0f)
 			faceRight = true;
