@@ -48,6 +48,12 @@ void Player::Update(float deltaTime)
 		velocity.y = -sqrtf(3.0f * 981.0f * jumpHeight);
 	}
 
+	/*if (sf::Mouse::isButtonPressed(sf::Mouse::Left)) {
+
+			sf::Vector2i mousePos = sf::Mouse::getPosition(window);                     ze starego maina
+			player.setPosition((float)mousePos.x, static_cast<float>(mousePos.y));
+		}*/
+
 	velocity.y += 981.0f * deltaTime;
 
 	if (velocity.x == 0.0f)

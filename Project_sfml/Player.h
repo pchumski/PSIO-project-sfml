@@ -16,6 +16,7 @@ public:
 	sf::Vector2f GetPosition() { return body.getPosition(); }
 	Collider GetCollider() { return Collider(body); }
 	sf::RectangleShape body;
+	int hp = 3;
 private:
 	//sf::RectangleShape body;
 	Animation animation;
