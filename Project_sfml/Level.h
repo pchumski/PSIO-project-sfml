@@ -2,6 +2,7 @@
 #include <vector>
 #include <map>
 #include <SFML\Graphics\Sprite.hpp>
+#include "Collider.h"
 
 class Level
 {

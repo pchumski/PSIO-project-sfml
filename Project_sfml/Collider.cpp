@@ -12,7 +12,7 @@ Collider::~Collider()
 bool Collider::CheckCollision(Collider& other, sf::Vector2f& direction, float push)
 {
 	sf::Vector2f otherPosition = other.GetPosition();
-	sf::Vector2f otherHalfSize= other.GetHalfSize();
+	sf::Vector2f otherHalfSize = other.GetHalfSize();
 	sf::Vector2f thisPosition = GetPosition();
 	sf::Vector2f thisHalfSize = GetHalfSize();
 
