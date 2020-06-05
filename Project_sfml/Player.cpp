@@ -10,7 +10,7 @@ Player::Player(sf::Texture* texture, sf::Vector2u imageCount, float switchTime, 
 
 	body.setSize(sf::Vector2f(128.0f, 128.0f));
 	//body.setOrigin(body.getSize() / 2.0f);
-	body.setPosition(1280.0f, 540.0f);
+	body.setPosition(3500.0f, 2300.0f);
 	body.setTexture(texture);
 }
 
@@ -24,16 +24,16 @@ void Player::Update(float deltaTime)
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::LShift))
 	{
 		if (sf::Keyboard::isKeyPressed(sf::Keyboard::A))
-			velocity.x -= speed*2;
+			velocity.x -= speed*2.5f;
 		if (sf::Keyboard::isKeyPressed(sf::Keyboard::D))
-			velocity.x += speed*2;
+			velocity.x += speed*2.5f;
 	}
 	else
 	{
 		if (sf::Keyboard::isKeyPressed(sf::Keyboard::A))
-			velocity.x -= speed;
+			velocity.x -= speed*1.5f;
 		if (sf::Keyboard::isKeyPressed(sf::Keyboard::D))
-			velocity.x += speed;
+			velocity.x += speed*1.5f;
 	}
 	
 	/*if (sf::Keyboard::isKeyPressed(sf::Keyboard::W) && canJump)

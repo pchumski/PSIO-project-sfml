@@ -16,8 +16,12 @@ Game::~Game()
 
 void Game::loadTextures()
 {
-	playerTexture.loadFromFile("rogue2.png");
+	playerTexture.loadFromFile("rogue5.png");
 	background.loadFromFile("BG.png");
+
+	one = new sf::Texture;
+	one->loadFromFile("x.png");
+	GroundTextures['x'] = one;
 
 	one->loadFromFile("1.png");
 	GroundTextures['a'] = one;
@@ -31,24 +35,65 @@ void Game::loadTextures()
 	GroundTextures['c'] = one;
 
 	one = new sf::Texture;
-	one->loadFromFile("13.png");
+	one->loadFromFile("4.png");
 	GroundTextures['d'] = one;
 
 	one = new sf::Texture;
-	one->loadFromFile("14.png");
+	one->loadFromFile("5.png");
 	GroundTextures['e'] = one;
 
 	one = new sf::Texture;
-	one->loadFromFile("15.png");
+	one->loadFromFile("6.png");
 	GroundTextures['f'] = one;
 
 	one = new sf::Texture;
-	one->loadFromFile("17.png");
+	one->loadFromFile("7.png");
 	GroundTextures['g'] = one;
 
 	one = new sf::Texture;
-	one->loadFromFile("18.png");
+	one->loadFromFile("8.png");
 	GroundTextures['h'] = one;
+
+	one = new sf::Texture;
+	one->loadFromFile("9.png");
+	GroundTextures['i'] = one;
+
+	one = new sf::Texture;
+	one->loadFromFile("10.png");
+	GroundTextures['j'] = one;
+
+	one = new sf::Texture;
+	one->loadFromFile("11.png");
+	GroundTextures['k'] = one;
+
+	one = new sf::Texture;
+	one->loadFromFile("12.png");
+	GroundTextures['l'] = one;
+
+	one = new sf::Texture;
+	one->loadFromFile("13.png");
+	GroundTextures['m'] = one;
+
+	one = new sf::Texture;
+	one->loadFromFile("14.png");
+	GroundTextures['n'] = one;
+
+	one = new sf::Texture;
+	one->loadFromFile("15.png");
+	GroundTextures['o'] = one;
+
+	one = new sf::Texture;
+	one->loadFromFile("16.png");
+	GroundTextures['p'] = one;
+
+	one = new sf::Texture;
+	one->loadFromFile("17.png");
+	GroundTextures['r'] = one;
+
+	one = new sf::Texture;
+	one->loadFromFile("18.png");
+	GroundTextures['s'] = one;
+
 }
 
 void Game::loadData()

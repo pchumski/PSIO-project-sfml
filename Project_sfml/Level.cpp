@@ -48,7 +48,7 @@ void Level::createMap(std::map<char, sf::Texture*> groundTextures)
 			{
 				//chunk.setRepeated(true);
 				chunk.setTexture(*groundTextures[Arrangement[i][j]]);
-				chunk.setScale(1.0f, 1.1f);
+				chunk.setScale(1.0f, 1.4f);
 				chunk.setPosition(float(j * 128), float(i * 128));
 				spritesLine.push_back(chunk);
 			}
