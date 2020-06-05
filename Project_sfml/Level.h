@@ -14,6 +14,7 @@ public:
 	std::vector<std::vector<sf::Sprite>> Matrix;
 	std::vector<std::vector<char>> Arrangement;
 
+
 	void loadMap();
 	void createMap(std::map<char, sf::Texture*> groundTextures);
 };

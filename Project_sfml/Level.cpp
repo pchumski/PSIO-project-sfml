@@ -57,3 +57,5 @@ void Level::createMap(std::map<char, sf::Texture*> groundTextures)
 		spritesLine.clear();
 	}
 }
+
+

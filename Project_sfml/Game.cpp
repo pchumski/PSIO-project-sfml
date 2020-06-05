@@ -6,12 +6,16 @@ Game::Game()
 	loadData();
 	player = new Player(&playerTexture, sf::Vector2u(6, 3), 0.3f, 200.0f, 200.0f);
 	level = new Level(GroundTextures);
+	levelView = new LevelView(ViewTextures);
+	items = new Items(ItemsTextures);
 	view = new sf::View(sf::Vector2f(0.0f, 0.0f), sf::Vector2f(VIEW_HEIGHT, VIEW_HEIGHT));
 }
 
 Game::~Game()
 {
 	delete one;
+	delete two;
+	delete three;
 }
 
 void Game::loadTextures()
@@ -23,6 +27,7 @@ void Game::loadTextures()
 	one->loadFromFile("x.png");
 	GroundTextures['x'] = one;
 
+	one = new sf::Texture;
 	one->loadFromFile("1.png");
 	GroundTextures['a'] = one;
 
@@ -94,6 +99,53 @@ void Game::loadTextures()
 	one->loadFromFile("18.png");
 	GroundTextures['s'] = one;
 
+	two = new sf::Texture;
+	two->loadFromFile("Bush1.png");
+	ViewTextures['1'] = two;
+
+	two = new sf::Texture;
+	two->loadFromFile("Bush2.png");
+	ViewTextures['2'] = two;
+
+	two = new sf::Texture;
+	two->loadFromFile("Bush3.png");
+	ViewTextures['3'] = two;
+
+	two = new sf::Texture;
+	two->loadFromFile("Bush4.png");
+	ViewTextures['4'] = two;
+
+	two = new sf::Texture;
+	two->loadFromFile("Sign1.png");
+	ViewTextures['5'] = two;
+
+	two = new sf::Texture;
+	two->loadFromFile("Sign2.png");
+	ViewTextures['6'] = two;
+
+	two = new sf::Texture;
+	two->loadFromFile("Sign3.png");
+	ViewTextures['7'] = two;
+
+	two = new sf::Texture;
+	two->loadFromFile("Stone.png");
+	ViewTextures['8'] = two;
+
+	two = new sf::Texture;
+	two->loadFromFile("Tree1.png");
+	ViewTextures['9'] = two;
+
+	two = new sf::Texture;
+	two->loadFromFile("Mushroom1.png");
+	ViewTextures['m'] = two;
+
+	two = new sf::Texture;
+	two->loadFromFile("Mushroom2.png");
+	ViewTextures['n'] = two;
+
+	three = new sf::Texture;
+	three->loadFromFile("Crate.png");
+	ItemsTextures['1'] = three;
 }
 
 void Game::loadData()
@@ -144,6 +196,8 @@ void Game::Update()
 				player->OnCollision(direction2);*/
 
 	CheckCollision1(direction, 1.0f);
+	CheckCollision2(direction2, 0.5f);
+	CheckCollision3(direction3, 1.0f);
 }
 
 void Game::Render()
@@ -174,6 +228,23 @@ void Game::Render()
 			window->draw(level->Matrix[i][j]);
 		}
 	}
+
+	for (int i = 0; i < levelView->MatrixView.size(); i++)
+	{
+		for (int j = 0; j < levelView->MatrixView[i].size(); j++)
+		{
+			window->draw(levelView->MatrixView[i][j]);
+		}
+	}
+
+	for (int i = 0; i < items->MatrixItems.size(); i++)
+	{
+		for (int j = 0; j < items->MatrixItems[i].size(); j++)
+		{
+			window->draw(items->MatrixItems[i][j]);
+		}
+	}
+
 	player->Draw(*window);
 	window->display();
 }
@@ -266,4 +337,93 @@ void Game::CheckCollision1(sf::Vector2f& direction, float p)
 		}
 
 	}
+}
+
+void Game::CheckCollision2(sf::Vector2f& direction, float p)
+{
+	float deltax;
+	float deltay;
+	float intersectX;
+	float intersectY;
+
+
+	for (size_t i = 0; i < this->items->MatrixItems.size(); i++)
+	{
+		for (size_t j = 0; j < this->items->MatrixItems[i].size(); j++)
+		{
+
+
+			sf::Vector2f thisposition = this->items->MatrixItems[i][j].getPosition();
+			sf::Vector2f otherposition = this->player->GetPosition();
+			sf::Vector2f thishalfsize(this->items->MatrixItems[i][j].getGlobalBounds().width / 2.0f, items->MatrixItems[i][j].getGlobalBounds().height / 2.0f);
+			sf::Vector2f otherhalfsize = this->player->body.getSize() / 2.0f;
+			bool t;
+
+			deltax = otherposition.x - thisposition.x;
+			deltay = otherposition.y - thisposition.y;
+
+			intersectX = std::abs(deltax) - (otherhalfsize.x + thishalfsize.x);
+			intersectY = std::abs(deltay) - (otherhalfsize.y + thishalfsize.y);
+
+			if (intersectX < 0.0f && intersectY < 0.0f)
+			{
+				p = std::min(std::max(p, 0.0f), 1.0f);
+
+				if (intersectX > intersectY)
+				{
+					if (deltax > 0.0f)
+					{
+						this->items->MatrixItems[i][j].move(intersectX * (1.0f - p), 0.0f);
+						this->player->body.move(-intersectX * p, 0.0f);
+
+						direction.x = 1.0f;
+						direction.y = 0.0f;
+					}
+					else
+					{
+						this->items->MatrixItems[i][j].move(-intersectX * (1.0f - p), 0.0f);
+						this->player->body.move(intersectX * p, 0.0f);
+
+						direction.x = -1.0f;
+						direction.y = 0.0f;
+					}
+				}
+				else
+				{
+					if (deltay > 0.0f)
+					{
+						this->items->MatrixItems[i][j].move(0.0f, intersectY * (1.0f - p));
+						this->player->body.move(0.0f, -intersectY * p);
+
+						direction.x = 0.0f;
+						direction.y = 1.0f;
+					}
+					else
+					{
+						this->items->MatrixItems[i][j].move(0.0f, -intersectY * (1.0f - p));
+						this->player->body.move(0.0f, intersectY * p);
+
+						direction.x = 0.0f;
+						direction.y = -1.0f;
+					}
+				}
+				//return true;
+				t = true;
+
+			}
+			else {
+				t = false;
+			}
+			if (t == true)
+			{
+				this->player->OnCollision(direction);
+			}
+		}
+
+	}
+}
+
+void Game::CheckCollision3(sf::Vector2f& direction, float p)
+{
+	
 }
