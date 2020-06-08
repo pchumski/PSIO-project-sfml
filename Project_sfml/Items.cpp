@@ -62,3 +62,27 @@ void Items::createItems(std::map<char, sf::Texture*> ItemsTextures)
 	}
 }
 
+void Items::OnCollision1(sf::Vector2f direction)
+{
+	if (direction.x < 0.0f)
+	{
+		//Collision on the left
+		velocity.x = 0.0f;
+	}
+	else if (direction.x > 0.0f)
+	{
+		//Collison on the right
+		velocity.x = 0.0f;
+	}
+	if (direction.y < 0.0f)
+	{
+		//Collsion on the bottom
+		velocity.y = 0.0f;
+	}
+	else if (direction.y > 0.0f)
+	{
+		//Collision on the top
+		velocity.y = 0.0f;
+	}
+}
+

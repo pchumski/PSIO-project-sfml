@@ -18,6 +18,13 @@ Game::~Game()
 	delete two;
 	delete three;
 	delete four;
+	delete window;
+	delete player;
+	delete level;
+	delete levelView;
+	delete items;
+	delete coin;
+	delete view;
 }
 
 void Game::loadTextures()
@@ -204,6 +211,7 @@ void Game::Update()
 	CheckCollision1(direction, 1.0f);
 	CheckCollision2(direction2, 0.5f);
 	CheckCollision3(direction3, 1.0f);
+	//CheckCollision4(direction4, 1.0f);
 }
 
 void Game::Render()
@@ -531,19 +539,9 @@ void Game::CheckCollision3(sf::Vector2f& direction, float p)
 				ssScore.str("");
 				ssScore << "Zdobyte monety: " <<  score;
 				lblScore.setString(ssScore.str());
-				std::vector<std::vector<sf::Sprite>>::iterator it;
-				it = coin->MatrixCoin.begin()+(i,j);
-				coin->MatrixCoin.erase(it,it);
 				
-				/*std::vector<std::vector<sf::Sprite>>::iterator row;
-				std::vector<sf::Sprite>::iterator col;
-				for (row = this->coin->MatrixCoin.begin(); row != this->coin->MatrixCoin.end(); row++) {
-					for (col = row->begin(); col != row->end(); col++) {
-						if(this->coin->MatrixCoin[i][j]==*col)
-						this->coin->MatrixCoin.erase(col);
-					}
-				}*/
-				/*this->coin->MatrixCoin.erase(this->coin->MatrixCoin.begin());*/
+				coin->MatrixCoin[i].erase(coin->MatrixCoin[i].begin()+j, coin->MatrixCoin[i].begin() +j+1);
+				
 				
 			}
 		}
@@ -551,14 +549,90 @@ void Game::CheckCollision3(sf::Vector2f& direction, float p)
 	}
 }
 
-/*bool Game::operator== (sf::Sprite sprite1, sf::Sprite sprite2)
-{
-	if (sprite1.getPosition().x == sprite2.getPosition().x)
-	{
-		return true;
-	}
-	else
-	{
-		return false;
-	}
-}*/
+//void Game::CheckCollision4(sf::Vector2f& direction, float p)
+//{
+//	float deltax;
+//	float deltay;
+//	float intersectX;
+//	float intersectY;
+//
+//
+//	for (size_t i = 0; i < this->items->MatrixItems.size(); i++)
+//	{
+//		for (size_t j = 0; j < this->items->MatrixItems[i].size(); j++)
+//		{
+//			if (this->items->MatrixItems[i].size() > 0) {
+//
+//
+//
+//				sf::Vector2f thisposition = this->level->Matrix[i][j].getPosition();
+//				sf::Vector2f otherposition = this->items->MatrixItems[i][j].getPosition();
+//				sf::Vector2f thishalfsize(this->level->Matrix[i][j].getGlobalBounds().width / 2.0f, level->Matrix[i][j].getGlobalBounds().height / 2.0f);
+//				sf::Vector2f otherhalfsize(this->items->MatrixItems[i][j].getGlobalBounds().width / 2.0f, items->MatrixItems[i][j].getGlobalBounds().height / 2.0f);
+//				bool t;
+//
+//				deltax = otherposition.x - thisposition.x;
+//				deltay = otherposition.y - thisposition.y;
+//
+//				intersectX = std::abs(deltax) - (otherhalfsize.x + thishalfsize.x);
+//				intersectY = std::abs(deltay) - (otherhalfsize.y + thishalfsize.y);
+//
+//				if (intersectX < 0.0f && intersectY < 0.0f)
+//				{
+//					p = std::min(std::max(p, 0.0f), 1.0f);
+//
+//					if (intersectX > intersectY)
+//					{
+//						if (deltax > 0.0f)
+//						{
+//							this->level->Matrix[i][j].move(intersectX * (1.0f - p), 0.0f);
+//							this->items->MatrixItems[i][j].move(-intersectX * p, 0.0f);
+//
+//							direction.x = 1.0f;
+//							direction.y = 0.0f;
+//						}
+//						else
+//						{
+//							this->level->Matrix[i][j].move(-intersectX * (1.0f - p), 0.0f);
+//							this->items->MatrixItems[i][j].move(intersectX * p, 0.0f);
+//
+//							direction.x = -1.0f;
+//							direction.y = 0.0f;
+//						}
+//					}
+//					else
+//					{
+//						if (deltay > 0.0f)
+//						{
+//							this->level->Matrix[i][j].move(0.0f, intersectY * (1.0f - p));
+//							this->items->MatrixItems[i][j].move(0.0f, -intersectY * p);
+//
+//							direction.x = 0.0f;
+//							direction.y = 1.0f;
+//						}
+//						else
+//						{
+//							this->level->Matrix[i][j].move(0.0f, -intersectY * (1.0f - p));
+//							this->items->MatrixItems[i][j].move(0.0f, intersectY * p);
+//
+//							direction.x = 0.0f;
+//							direction.y = -1.0f;
+//						}
+//					}
+//					//return true;
+//					t = true;
+//
+//				}
+//				else {
+//					t = false;
+//					this->items->MatrixItems[i][j].move(0.0f, 1.0f);
+//				}
+//				if (t == true)
+//				{
+//					int k = 0;
+//				}
+//			}
+//		}
+//
+//	}
+//}

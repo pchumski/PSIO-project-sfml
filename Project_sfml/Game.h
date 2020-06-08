@@ -31,6 +31,7 @@ public:
 	sf::Vector2f direction;
 	sf::Vector2f direction2;
 	sf::Vector2f direction3;
+	sf::Vector2f direction4;
 	float deltaTime = 0.0f;
 	sf::Texture playerTexture;
 	std::vector<Platform> platforms;
@@ -46,8 +47,7 @@ public:
 	std::ostringstream ssScore;
 	int score = 0;
 	sf::Font font;
-	/*bool operator== (sf::Sprite sprite1, sf::Sprite sprite2);*/
-
+	
 	Game();
 	~Game();
 	void loadTextures();
@@ -59,5 +59,6 @@ public:
 	void CheckCollision1(sf::Vector2f& direction, float p);
 	void CheckCollision2(sf::Vector2f& direction2, float p);
 	void CheckCollision3(sf::Vector2f& direction, float p);
+	//void CheckCollision4(sf::Vector2f& direction, float p);
 };
 
