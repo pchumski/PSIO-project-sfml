@@ -1,5 +1,6 @@
 #pragma once
 #include <SFML/Graphics.hpp>
+#include <sstream>
 #include <iostream>
 #include <vector>
 #include <map>
@@ -8,6 +9,7 @@
 #include "Level.h"
 #include "LevelView.h"
 #include "Items.h"
+#include "Coin.h"
 
 class Game
 { 
@@ -18,11 +20,13 @@ public:
 	Level *level;
 	LevelView *levelView;
 	Items* items;
+	Coin* coin;
 	sf::Event evnt;
 	sf::Clock clock;
 	std::map<char, sf::Texture*> GroundTextures;
 	std::map<char, sf::Texture*> ViewTextures;
 	std::map<char, sf::Texture*> ItemsTextures;
+	std::map<char, sf::Texture*> CoinTextures;
 	float VIEW_HEIGHT = 800.0f;
 	sf::Vector2f direction;
 	sf::Vector2f direction2;
@@ -37,6 +41,12 @@ public:
 	sf::Texture* one = new sf::Texture;
 	sf::Texture* two = new sf::Texture;
 	sf::Texture* three = new sf::Texture;
+	sf::Texture* four = new sf::Texture;
+	sf::Text lblScore;
+	std::ostringstream ssScore;
+	int score = 0;
+	sf::Font font;
+	/*bool operator== (sf::Sprite sprite1, sf::Sprite sprite2);*/
 
 	Game();
 	~Game();
@@ -48,6 +58,6 @@ public:
 	void ResizeView(const sf::RenderWindow& window, sf::View& view);
 	void CheckCollision1(sf::Vector2f& direction, float p);
 	void CheckCollision2(sf::Vector2f& direction2, float p);
-	void CheckCollision3(sf::Vector2f& direction3, float p);
+	void CheckCollision3(sf::Vector2f& direction, float p);
 };
 

@@ -8,6 +8,7 @@ Game::Game()
 	level = new Level(GroundTextures);
 	levelView = new LevelView(ViewTextures);
 	items = new Items(ItemsTextures);
+	coin = new Coin(CoinTextures);
 	view = new sf::View(sf::Vector2f(0.0f, 0.0f), sf::Vector2f(VIEW_HEIGHT, VIEW_HEIGHT));
 }
 
@@ -16,6 +17,7 @@ Game::~Game()
 	delete one;
 	delete two;
 	delete three;
+	delete four;
 }
 
 void Game::loadTextures()
@@ -146,6 +148,10 @@ void Game::loadTextures()
 	three = new sf::Texture;
 	three->loadFromFile("Crate.png");
 	ItemsTextures['1'] = three;
+
+	four = new sf::Texture;
+	four->loadFromFile("coin.png");
+	CoinTextures['1'] = four;
 }
 
 void Game::loadData()
@@ -194,7 +200,7 @@ void Game::Update()
 		for (Platform& platform : platforms2)
 			if (platform.GetCollider().CheckCollision(col, direction2, 0.3f))
 				player->OnCollision(direction2);*/
-
+	
 	CheckCollision1(direction, 1.0f);
 	CheckCollision2(direction2, 0.5f);
 	CheckCollision3(direction3, 1.0f);
@@ -209,6 +215,7 @@ void Game::Render()
 	window->clear();
 	window->draw(BackGround);
 	window->setView(*view);
+	lblScore.setPosition(view->getCenter().x + 500, view->getCenter().y - 400);
 
 	/*platforms.push_back(Platform(nullptr, sf::Vector2f(400.0f, 200.0f), sf::Vector2f(500.0f, 200.0f)));
 	platforms.push_back(Platform(nullptr, sf::Vector2f(400.0f, 200.0f), sf::Vector2f(500.0f, 0.0f)));
@@ -245,7 +252,23 @@ void Game::Render()
 		}
 	}
 
+	for (int i = 0; i < coin->MatrixCoin.size(); i++)
+	{
+		for (int j = 0; j < coin->MatrixCoin[i].size(); j++)
+		{
+			window->draw(coin->MatrixCoin[i][j]);
+		}
+	}
+
+	font.loadFromFile("font.ttf");
+	lblScore.setCharacterSize(20);
+	lblScore.setFillColor(sf::Color::Black);
+	lblScore.setFont(font);
+	lblScore.setString(ssScore.str());
+
+
 	player->Draw(*window);
+	window->draw(lblScore);
 	window->display();
 }
 
@@ -253,6 +276,10 @@ void Game::ResizeView(const sf::RenderWindow& window, sf::View& view)
 {
 	float aspectRatio = float(window.getSize().x) / float(window.getSize().y);
 	view.setSize(VIEW_HEIGHT * aspectRatio, VIEW_HEIGHT);
+	if (score == 0)
+	{
+		ssScore << "Zdobyte monety:   " << score;
+	}
 }
 
 void Game::CheckCollision1(sf::Vector2f& direction, float p)
@@ -425,5 +452,113 @@ void Game::CheckCollision2(sf::Vector2f& direction, float p)
 
 void Game::CheckCollision3(sf::Vector2f& direction, float p)
 {
-	
+	float deltax;
+	float deltay;
+	float intersectX;
+	float intersectY;
+
+
+	for (size_t i = 0; i < this->coin->MatrixCoin.size(); i++)
+	{
+		for (size_t j = 0; j < this->coin->MatrixCoin[i].size(); j++)
+		{
+
+
+			sf::Vector2f thisposition = this->coin->MatrixCoin[i][j].getPosition();
+			sf::Vector2f otherposition = this->player->GetPosition();
+			sf::Vector2f thishalfsize(this->coin->MatrixCoin[i][j].getGlobalBounds().width / 2.0f, coin->MatrixCoin[i][j].getGlobalBounds().height / 2.0f);
+			sf::Vector2f otherhalfsize = this->player->body.getSize() / 2.0f;
+			bool t;
+
+			deltax = otherposition.x - thisposition.x;
+			deltay = otherposition.y - thisposition.y;
+
+			intersectX = std::abs(deltax) - (otherhalfsize.x + thishalfsize.x);
+			intersectY = std::abs(deltay) - (otherhalfsize.y + thishalfsize.y);
+
+			if (intersectX < 0.0f && intersectY < 0.0f)
+			{
+				p = std::min(std::max(p, 0.0f), 1.0f);
+
+				if (intersectX > intersectY)
+				{
+					if (deltax > 0.0f)
+					{
+						this->coin->MatrixCoin[i][j].move(intersectX * (1.0f - p), 0.0f);
+						this->player->body.move(-intersectX * p, 0.0f);
+
+						direction.x = 1.0f;
+						direction.y = 0.0f;
+					}
+					else
+					{
+						this->coin->MatrixCoin[i][j].move(-intersectX * (1.0f - p), 0.0f);
+						this->player->body.move(intersectX * p, 0.0f);
+
+						direction.x = -1.0f;
+						direction.y = 0.0f;
+					}
+				}
+				else
+				{
+					if (deltay > 0.0f)
+					{
+						this->coin->MatrixCoin[i][j].move(0.0f, intersectY * (1.0f - p));
+						this->player->body.move(0.0f, -intersectY * p);
+
+						direction.x = 0.0f;
+						direction.y = 1.0f;
+					}
+					else
+					{
+						this->coin->MatrixCoin[i][j].move(0.0f, -intersectY * (1.0f - p));
+						this->player->body.move(0.0f, intersectY * p);
+
+						direction.x = 0.0f;
+						direction.y = -1.0f;
+					}
+				}
+				//return true;
+				t = true;
+
+			}
+			else {
+				t = false;
+			}
+			if (t == true)
+			{
+				score++;
+				ssScore.str("");
+				ssScore << "Zdobyte monety: " <<  score;
+				lblScore.setString(ssScore.str());
+				std::vector<std::vector<sf::Sprite>>::iterator it;
+				it = coin->MatrixCoin.begin()+(i,j);
+				coin->MatrixCoin.erase(it,it);
+				
+				/*std::vector<std::vector<sf::Sprite>>::iterator row;
+				std::vector<sf::Sprite>::iterator col;
+				for (row = this->coin->MatrixCoin.begin(); row != this->coin->MatrixCoin.end(); row++) {
+					for (col = row->begin(); col != row->end(); col++) {
+						if(this->coin->MatrixCoin[i][j]==*col)
+						this->coin->MatrixCoin.erase(col);
+					}
+				}*/
+				/*this->coin->MatrixCoin.erase(this->coin->MatrixCoin.begin());*/
+				
+			}
+		}
+
+	}
 }
+
+/*bool Game::operator== (sf::Sprite sprite1, sf::Sprite sprite2)
+{
+	if (sprite1.getPosition().x == sprite2.getPosition().x)
+	{
+		return true;
+	}
+	else
+	{
+		return false;
+	}
+}*/

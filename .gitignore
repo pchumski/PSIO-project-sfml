@@ -869,3 +869,4 @@ examples/*/*.xml
 *.filters
 *.vcxproj
 *.png
+*.ttf

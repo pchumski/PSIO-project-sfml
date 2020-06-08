@@ -16,5 +16,6 @@ public:
 
 	void loadItems();
 	void createItems(std::map<char, sf::Texture*> ItemsTextures);
+
 };
 
