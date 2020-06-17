@@ -868,5 +868,4 @@ examples/*/*.xml
 *.sln
 *.filters
 *.vcxproj
-*.png
-*.ttf
+

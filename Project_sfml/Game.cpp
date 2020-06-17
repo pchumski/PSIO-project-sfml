@@ -286,7 +286,7 @@ void Game::ResizeView(const sf::RenderWindow& window, sf::View& view)
 	view.setSize(VIEW_HEIGHT * aspectRatio, VIEW_HEIGHT);
 	if (score == 0)
 	{
-		ssScore << "Zdobyte monety:   " << score;
+		ssScore << "Zdobyte monety: " << score;
 	}
 }
 
