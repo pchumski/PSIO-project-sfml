@@ -10,6 +10,7 @@ Game::Game()
 	items = new Items(ItemsTextures);
 	coin = new Coin(CoinTextures);
 	view = new sf::View(sf::Vector2f(0.0f, 0.0f), sf::Vector2f(VIEW_HEIGHT, VIEW_HEIGHT));
+	dangerousitems = new DangerousItems(DangerousTextures);
 }
 
 Game::~Game()
@@ -18,6 +19,7 @@ Game::~Game()
 	delete two;
 	delete three;
 	delete four;
+	delete five;
 	delete window;
 	delete player;
 	delete level;
@@ -100,13 +102,13 @@ void Game::loadTextures()
 	one->loadFromFile("16.png");
 	GroundTextures['p'] = one;
 
-	one = new sf::Texture;
+	/*one = new sf::Texture;
 	one->loadFromFile("17.png");
 	GroundTextures['r'] = one;
 
 	one = new sf::Texture;
 	one->loadFromFile("18.png");
-	GroundTextures['s'] = one;
+	GroundTextures['s'] = one;*/
 
 	two = new sf::Texture;
 	two->loadFromFile("Bush1.png");
@@ -159,6 +161,35 @@ void Game::loadTextures()
 	four = new sf::Texture;
 	four->loadFromFile("coin.png");
 	CoinTextures['1'] = four;
+
+	five = new sf::Texture;
+	five->loadFromFile("17.png");
+	DangerousTextures['r'] = five;
+
+	five = new sf::Texture;
+	five->loadFromFile("18.png");
+	DangerousTextures['s'] = five;
+
+	
+	file.loadFromFile("hpfull.png");
+	hpfull.setTexture(file);
+	hpfull.setScale(0.7f, 0.7f);
+
+	filenull.loadFromFile("hpnull.png");
+	hpnull.setTexture(filenull);
+	hpnull.setScale(0.7f, 0.7f);
+
+	hp.push_back(hpfull);
+	hp.push_back(hpfull);
+	hp.push_back(hpfull);
+
+	hp.push_back(hpnull);
+	hp.push_back(hpnull);
+	hp.push_back(hpnull);
+
+	coin_gold.loadFromFile("coin_gold.png");
+	gold_coin.setTexture(coin_gold);
+	gold_coin.setScale(0.5f, 0.5f);
 }
 
 void Game::loadData()
@@ -212,6 +243,7 @@ void Game::Update()
 	CheckCollision2(direction2, 0.5f);
 	CheckCollision3(direction3, 1.0f);
 	CheckCollision4(direction4, 1.0f);
+	CheckCollision5(direction5, 1.0f);
 	
 }
 
@@ -224,7 +256,17 @@ void Game::Render()
 	window->clear();
 	window->draw(BackGround);
 	window->setView(*view);
-	lblScore.setPosition(view->getCenter().x + 500, view->getCenter().y - 400);
+	lblScore.setPosition(view->getCenter().x + 730, view->getCenter().y - 397);
+	gold_coin.setPosition(view->getCenter().x + 690, view->getCenter().y - 400);
+
+	hp[0].setPosition(view->getCenter().x - 765, view->getCenter().y - 400);
+	hp[1].setPosition(view->getCenter().x - 725, view->getCenter().y - 400);
+	hp[2].setPosition(view->getCenter().x - 685, view->getCenter().y - 400);
+
+	hp[3].setPosition(view->getCenter().x - 765, view->getCenter().y - 400);
+	hp[4].setPosition(view->getCenter().x - 725, view->getCenter().y - 400);
+	hp[5].setPosition(view->getCenter().x - 685, view->getCenter().y - 400);
+	
 
 	/*platforms.push_back(Platform(nullptr, sf::Vector2f(400.0f, 200.0f), sf::Vector2f(500.0f, 200.0f)));
 	platforms.push_back(Platform(nullptr, sf::Vector2f(400.0f, 200.0f), sf::Vector2f(500.0f, 0.0f)));
@@ -242,6 +284,14 @@ void Game::Render()
 		for (int j = 0; j < level->Matrix[i].size(); j++)
 		{
 			window->draw(level->Matrix[i][j]);
+		}
+	}
+
+	for (int i = 0; i < dangerousitems->MatrixDangerousItems.size(); i++)
+	{
+		for (int j = 0; j < dangerousitems->MatrixDangerousItems[i].size(); j++)
+		{
+			window->draw(dangerousitems->MatrixDangerousItems[i][j]);
 		}
 	}
 
@@ -275,9 +325,35 @@ void Game::Render()
 	lblScore.setFont(font);
 	lblScore.setString(ssScore.str());
 
-
+	
 	player->Draw(*window);
 	window->draw(lblScore);
+	window->draw(gold_coin);
+	if (player->hp == 3)
+	{
+		window->draw(hp[0]);
+		window->draw(hp[1]);
+		window->draw(hp[2]);
+	}
+	if (player->hp == 2)
+	{
+		window->draw(hp[0]);
+		window->draw(hp[1]);
+		window->draw(hp[5]);
+	}
+	if (player->hp == 1)
+	{
+		window->draw(hp[0]);
+		window->draw(hp[4]);
+		window->draw(hp[5]);
+	}
+	if (player->hp <= 0)
+	{
+		window->draw(hp[3]);
+		window->draw(hp[4]);
+		window->draw(hp[5]);
+	}
+	
 	window->display();
 }
 
@@ -287,7 +363,7 @@ void Game::ResizeView(const sf::RenderWindow& window, sf::View& view)
 	view.setSize(VIEW_HEIGHT * aspectRatio, VIEW_HEIGHT);
 	if (score == 0)
 	{
-		ssScore << "Zdobyte monety: " << score;
+		ssScore << score;
 	}
 }
 
@@ -538,7 +614,7 @@ void Game::CheckCollision3(sf::Vector2f& direction, float p)
 			{
 				score++;
 				ssScore.str("");
-				ssScore << "Zdobyte monety: " <<  score;
+				ssScore << score;
 				lblScore.setString(ssScore.str());
 				
 				coin->MatrixCoin[i].erase(coin->MatrixCoin[i].begin()+j, coin->MatrixCoin[i].begin() +j+1);
@@ -569,10 +645,10 @@ void Game::CheckCollision4(sf::Vector2f& direction, float p)
 						sf::Vector2f otherhalfsize(this->items->MatrixItems[a][b].getGlobalBounds().width / 2.0f, this->items->MatrixItems[a][b].getGlobalBounds().height / 2.0f);
 						bool t;
 
-						float deltax; //zmienna odleglosc miedzy pozycja x przedmiotu i pozycja x innych obiektow
-						float deltay; //zmienna odleglosc miedzy pozycja y przedmiotu i pozycja y innych obiektow
-						float intersectX; //przeciecie w osi X obiektu z przedmiotem
-						float intersectY; //przeciecie w osi Y obiektu z przedmiotem
+						float deltax;
+						float deltay;
+						float intersectX;
+						float intersectY; 
 
 						deltax = otherposition.x - thisposition.x;
 						deltay = otherposition.y - thisposition.y;
@@ -580,7 +656,7 @@ void Game::CheckCollision4(sf::Vector2f& direction, float p)
 						intersectX = std::abs(deltax) - (otherhalfsize.x + thishalfsize.x);
 						intersectY = std::abs(deltay) - (otherhalfsize.y + thishalfsize.y);
 
-						if (intersectX < 1.0f && intersectY < 1.0f) //jesli obie osie przeciecia obiektu sa mniejsze od 0 to znaczy ze obiekty na siebie nachodza i nastepuje zderzenie
+						if (intersectX < 1.0f && intersectY < 1.0f)
 						{
 							p = std::min(std::max(p, 0.0f), 1.0f);
 
@@ -588,7 +664,7 @@ void Game::CheckCollision4(sf::Vector2f& direction, float p)
 							{
 								if (deltax > 0.0f)
 								{
-									this->level->Matrix[i][j].move(intersectX * (1.0f - p), 0.0f); //odbicia podczas zderzen kazdy w innym kierunku
+									this->level->Matrix[i][j].move(intersectX * (1.0f - p), 0.0f); 
 									this->items->MatrixItems[a][b].move(-intersectX * p, 0.0f);
 
 									direction.x = 1.0f;
@@ -636,12 +712,119 @@ void Game::CheckCollision4(sf::Vector2f& direction, float p)
 						}
 						else
 						{
-							this->items->MatrixItems[a][b].move(0.0f, 0.01f);
+							this->items->MatrixItems[a][b].move(0.0f, 0.03f);
 						}
 				}
 			}
 		}
 	}
 
+}
+
+void Game::CheckCollision5(sf::Vector2f& direction, float p)
+{
+	/*float deltax;
+	float deltay;
+	float intersectX;
+	float intersectY;*/
+
+
+	for (size_t i = 0; i < this->dangerousitems->MatrixDangerousItems.size(); i++)
+	{
+		for (size_t j = 0; j < this->dangerousitems->MatrixDangerousItems[i].size(); j++)
+		{
+
+			if (this->player->body.getGlobalBounds().intersects(this->dangerousitems->MatrixDangerousItems[i][j].getGlobalBounds()))
+			{
+				player->hp -= 1;
+				player->body.setPosition(3500.0f, 2300.0f);
+			}
+
+			/*sf::Vector2f thisposition = this->dangerousitems->MatrixDangerousItems[i][j].getPosition();
+			sf::Vector2f otherposition = this->player->GetPosition();
+			sf::Vector2f thishalfsize(this->dangerousitems->MatrixDangerousItems[i][j].getGlobalBounds().width / 2.0f, this->dangerousitems->MatrixDangerousItems[i][j].getGlobalBounds().height / 2.0f);
+			sf::Vector2f otherhalfsize = this->player->body.getSize() / 2.0f;
+			bool t;
+
+			deltax = otherposition.x - thisposition.x;
+			deltay = otherposition.y - thisposition.y;
+
+			intersectX = std::abs(deltax) - (otherhalfsize.x + thishalfsize.x);
+			intersectY = std::abs(deltay) - (otherhalfsize.y + thishalfsize.y);
+
+			if (intersectX < 0.0f && intersectY < 0.0f)
+			{
+				p = std::min(std::max(p, 0.0f), 1.0f);
+
+				if (intersectX > intersectY)
+				{
+					if (deltax > 0.0f)
+					{
+						this->dangerousitems->MatrixDangerousItems[i][j].move(intersectX * (1.0f - p), 0.0f);
+						this->player->body.move(-intersectX * p, 0.0f);
+
+						direction.x = 1.0f;
+						direction.y = 0.0f;
+					}
+					else
+					{
+						this->dangerousitems->MatrixDangerousItems[i][j].move(-intersectX * (1.0f - p), 0.0f);
+						this->player->body.move(intersectX * p, 0.0f);
+
+						direction.x = -1.0f;
+						direction.y = 0.0f;
+					}
+				}
+				else
+				{
+					if (deltay > 0.0f)
+					{
+						this->dangerousitems->MatrixDangerousItems[i][j].move(0.0f, intersectY * (1.0f - p));
+						this->player->body.move(0.0f, -intersectY * p);
+
+						direction.x = 0.0f;
+						direction.y = 1.0f;
+					}
+					else
+					{
+						this->dangerousitems->MatrixDangerousItems[i][j].move(0.0f, -intersectY * (1.0f - p));
+						this->player->body.move(0.0f, intersectY * p);
+
+						direction.x = 0.0f;
+						direction.y = -1.0f;
+					}
+				}
+				
+				t = true;
+
+			}
+			else {
+				t = false;
+			}
+			if (t == true)
+			{
+				player->hp -= 1;
+				player->body.setPosition(3500.0f, 2300.0f);
+				if(player->hp == 2)
+				{
+					hp.erase(hp.begin()+2, hp.end());
+					hp.push_back(hpfull);
+				}
+				else if(player->hp == 1)
+				{
+					hp.erase(hp.begin() +1, hp.end());
+					hp.push_back(hpfull);
+				}
+				else if (player->hp == 0)
+				{
+					hp.erase(hp.begin() , hp.end());
+					hp.push_back(hpfull);
+				}
+
+				
+			}*/
+		}
+
+	}
 }
 
