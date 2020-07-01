@@ -211,7 +211,8 @@ void Game::Update()
 	CheckCollision1(direction, 1.0f);
 	CheckCollision2(direction2, 0.5f);
 	CheckCollision3(direction3, 1.0f);
-	//CheckCollision4(direction4, 1.0f);
+	CheckCollision4(direction4, 1.0f);
+	
 }
 
 void Game::Render()
@@ -549,90 +550,98 @@ void Game::CheckCollision3(sf::Vector2f& direction, float p)
 	}
 }
 
-//void Game::CheckCollision4(sf::Vector2f& direction, float p)
-//{
-//	float deltax;
-//	float deltay;
-//	float intersectX;
-//	float intersectY;
-//
-//
-//	for (size_t i = 0; i < this->items->MatrixItems.size(); i++)
-//	{
-//		for (size_t j = 0; j < this->items->MatrixItems[i].size(); j++)
-//		{
-//			if (this->items->MatrixItems[i].size() > 0) {
-//
-//
-//
-//				sf::Vector2f thisposition = this->level->Matrix[i][j].getPosition();
-//				sf::Vector2f otherposition = this->items->MatrixItems[i][j].getPosition();
-//				sf::Vector2f thishalfsize(this->level->Matrix[i][j].getGlobalBounds().width / 2.0f, level->Matrix[i][j].getGlobalBounds().height / 2.0f);
-//				sf::Vector2f otherhalfsize(this->items->MatrixItems[i][j].getGlobalBounds().width / 2.0f, items->MatrixItems[i][j].getGlobalBounds().height / 2.0f);
-//				bool t;
-//
-//				deltax = otherposition.x - thisposition.x;
-//				deltay = otherposition.y - thisposition.y;
-//
-//				intersectX = std::abs(deltax) - (otherhalfsize.x + thishalfsize.x);
-//				intersectY = std::abs(deltay) - (otherhalfsize.y + thishalfsize.y);
-//
-//				if (intersectX < 0.0f && intersectY < 0.0f)
-//				{
-//					p = std::min(std::max(p, 0.0f), 1.0f);
-//
-//					if (intersectX > intersectY)
-//					{
-//						if (deltax > 0.0f)
-//						{
-//							this->level->Matrix[i][j].move(intersectX * (1.0f - p), 0.0f);
-//							this->items->MatrixItems[i][j].move(-intersectX * p, 0.0f);
-//
-//							direction.x = 1.0f;
-//							direction.y = 0.0f;
-//						}
-//						else
-//						{
-//							this->level->Matrix[i][j].move(-intersectX * (1.0f - p), 0.0f);
-//							this->items->MatrixItems[i][j].move(intersectX * p, 0.0f);
-//
-//							direction.x = -1.0f;
-//							direction.y = 0.0f;
-//						}
-//					}
-//					else
-//					{
-//						if (deltay > 0.0f)
-//						{
-//							this->level->Matrix[i][j].move(0.0f, intersectY * (1.0f - p));
-//							this->items->MatrixItems[i][j].move(0.0f, -intersectY * p);
-//
-//							direction.x = 0.0f;
-//							direction.y = 1.0f;
-//						}
-//						else
-//						{
-//							this->level->Matrix[i][j].move(0.0f, -intersectY * (1.0f - p));
-//							this->items->MatrixItems[i][j].move(0.0f, intersectY * p);
-//
-//							direction.x = 0.0f;
-//							direction.y = -1.0f;
-//						}
-//					}
-//					//return true;
-//					t = true;
-//
-//				}
-//				else {
-//					t = false;
-//					this->items->MatrixItems[i][j].move(0.0f, 1.0f);
-//				}
-//				if (t == true)
-//				{
-//					int k = 0;
-//				}
-//			}
-//		}
-//
-//	}
-//}
+void Game::CheckCollision4(sf::Vector2f& direction, float p)
+{
+
+
+	for (size_t i = 0; i < this->level->Matrix.size(); i++)
+	{
+		for (size_t j = 0; j < this->level->Matrix[i].size(); j++)
+		{
+
+			for (size_t a = 0; a < this->items->MatrixItems.size(); a++) {
+				for (size_t b = 0; b < this->items->MatrixItems[a].size(); b++)
+				{
+					
+						sf::Vector2f thisposition = this->level->Matrix[i][j].getPosition();
+						sf::Vector2f thishalfsize(this->level->Matrix[i][j].getGlobalBounds().width / 2.0f, this->level->Matrix[i][j].getGlobalBounds().height / 2.0f);
+						sf::Vector2f otherposition = this->items->MatrixItems[a][b].getPosition();
+						sf::Vector2f otherhalfsize(this->items->MatrixItems[a][b].getGlobalBounds().width / 2.0f, this->items->MatrixItems[a][b].getGlobalBounds().height / 2.0f);
+						bool t;
+
+						float deltax; //zmienna odleglosc miedzy pozycja x przedmiotu i pozycja x innych obiektow
+						float deltay; //zmienna odleglosc miedzy pozycja y przedmiotu i pozycja y innych obiektow
+						float intersectX; //przeciecie w osi X obiektu z przedmiotem
+						float intersectY; //przeciecie w osi Y obiektu z przedmiotem
+
+						deltax = otherposition.x - thisposition.x;
+						deltay = otherposition.y - thisposition.y;
+
+						intersectX = std::abs(deltax) - (otherhalfsize.x + thishalfsize.x);
+						intersectY = std::abs(deltay) - (otherhalfsize.y + thishalfsize.y);
+
+						if (intersectX < 1.0f && intersectY < 1.0f) //jesli obie osie przeciecia obiektu sa mniejsze od 0 to znaczy ze obiekty na siebie nachodza i nastepuje zderzenie
+						{
+							p = std::min(std::max(p, 0.0f), 1.0f);
+
+							if (intersectX > intersectY)
+							{
+								if (deltax > 0.0f)
+								{
+									this->level->Matrix[i][j].move(intersectX * (1.0f - p), 0.0f); //odbicia podczas zderzen kazdy w innym kierunku
+									this->items->MatrixItems[a][b].move(-intersectX * p, 0.0f);
+
+									direction.x = 1.0f;
+									direction.y = 0.0f;
+								}
+								else
+								{
+									this->level->Matrix[i][j].move(-intersectX * (1.0f - p), 0.0f);
+									this->items->MatrixItems[a][b].move(intersectX * p, 0.0f);
+
+									direction.x = -1.0f;
+									direction.y = 0.0f;
+								}
+							}
+							else
+							{
+								if (deltay > 0.0f)
+								{
+									this->level->Matrix[i][j].move(0.0f, intersectY * (1.0f - p));
+									this->items->MatrixItems[a][b].move(0.0f, -intersectY * p);
+
+									direction.x = 0.0f;
+									direction.y = 1.0f;
+								}
+								else
+								{
+									this->level->Matrix[i][j].move(0.0f, -intersectY * (1.0f - p));
+									this->items->MatrixItems[a][b].move(0.0f, intersectY * p);
+
+									direction.x = 0.0f;
+									direction.y = -1.0f;
+								}
+							}
+
+							t = true;
+
+						}
+						else {
+							t = false;
+						}
+
+						if (t == true)
+						{
+							this->items->OnCollision1(direction, a, b);
+						}
+						else
+						{
+							this->items->MatrixItems[a][b].move(0.0f, 0.01f);
+						}
+				}
+			}
+		}
+	}
+
+}
+

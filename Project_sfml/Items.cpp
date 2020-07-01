@@ -62,27 +62,35 @@ void Items::createItems(std::map<char, sf::Texture*> ItemsTextures)
 	}
 }
 
-void Items::OnCollision1(sf::Vector2f direction)
+void Items::OnCollision1(sf::Vector2f& direction, const size_t& i, const size_t& j)
 {
 	if (direction.x < 0.0f)
 	{
 		//Collision on the left
-		velocity.x = 0.0f;
+		this->MatrixItems[i][j].move(0.0f, 0.0f);
+		//vx=0.0f;
 	}
 	else if (direction.x > 0.0f)
 	{
-		//Collison on the right
-		velocity.x = 0.0f;
+		//Collision on the rigth
+		//vx=0.0f;
+		this->MatrixItems[i][j].move(0.0f, 0.0f);
 	}
+
 	if (direction.y < 0.0f)
 	{
-		//Collsion on the bottom
-		velocity.y = 0.0f;
+		//Collision on the bottom
+		//vy=0.0f;
+		this->MatrixItems[i][j].move(0.0f, 0.0f);
+
 	}
 	else if (direction.y > 0.0f)
 	{
 		//Collision on the top
-		velocity.y = 0.0f;
+		//vy=0.0f;
+		this->MatrixItems[i][j].move(0.0f, 0.0f);
 	}
 }
+
+
 

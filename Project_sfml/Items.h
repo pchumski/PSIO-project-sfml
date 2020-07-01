@@ -17,7 +17,7 @@ public:
 
 	void loadItems();
 	void createItems(std::map<char, sf::Texture*> ItemsTextures);
-	void OnCollision1(sf::Vector2f direction);
+	void OnCollision1(sf::Vector2f& direction, const size_t& i, const size_t& j);
 
 };
 

@@ -59,6 +59,7 @@ public:
 	void CheckCollision1(sf::Vector2f& direction, float p);
 	void CheckCollision2(sf::Vector2f& direction2, float p);
 	void CheckCollision3(sf::Vector2f& direction, float p);
-	//void CheckCollision4(sf::Vector2f& direction, float p);
+	void CheckCollision4(sf::Vector2f& direction, float p);
+	
 };
 
