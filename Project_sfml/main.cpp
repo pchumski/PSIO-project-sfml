@@ -10,5 +10,6 @@ int main()
 		game->Render();
 	}
 
+	delete game;
 	return 0;
 }

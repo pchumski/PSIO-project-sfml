@@ -32,6 +32,8 @@ Game::~Game()
 void Game::loadTextures()
 {
 	playerTexture.loadFromFile("rogue5.png");
+	enemyTexture.loadFromFile("enemy.png");
+
 	background.loadFromFile("BG.png");
 
 	one = new sf::Texture;
@@ -195,6 +197,7 @@ void Game::loadTextures()
 void Game::loadData()
 {
 	loadTextures();
+	loadEnemies();
 }
 
 bool Game::Run()
@@ -204,7 +207,7 @@ bool Game::Run()
 
 void Game::Update()
 {
-	window->setFramerateLimit(30);
+	window->setFramerateLimit(60);
 	deltaTime = clock.restart().asSeconds();
 	if (deltaTime > 1.0f / 20.0f)
 		deltaTime = 1.0f / 20.0f;
@@ -229,6 +232,11 @@ void Game::Update()
 		}
 	}
 
+	for (size_t i = 0; i < Enemy.size(); i++)
+	{
+		Enemy[i]->Update(deltaTime);
+	}
+
 	player->Update(deltaTime);
 
 	/*for(Platform& platform : platforms)
@@ -244,6 +252,7 @@ void Game::Update()
 	CheckCollision3(direction3, 1.0f);
 	CheckCollision4(direction4, 1.0f);
 	CheckCollision5(direction5, 1.0f);
+	CheckCollision6(direction6, 1.0f);
 	
 }
 
@@ -287,14 +296,6 @@ void Game::Render()
 		}
 	}
 
-	for (int i = 0; i < dangerousitems->MatrixDangerousItems.size(); i++)
-	{
-		for (int j = 0; j < dangerousitems->MatrixDangerousItems[i].size(); j++)
-		{
-			window->draw(dangerousitems->MatrixDangerousItems[i][j]);
-		}
-	}
-
 	for (int i = 0; i < levelView->MatrixView.size(); i++)
 	{
 		for (int j = 0; j < levelView->MatrixView[i].size(); j++)
@@ -308,6 +309,14 @@ void Game::Render()
 		for (int j = 0; j < items->MatrixItems[i].size(); j++)
 		{
 			window->draw(items->MatrixItems[i][j]);
+		}
+	}
+
+	for (int i = 0; i < dangerousitems->MatrixDangerousItems.size(); i++)
+	{
+		for (int j = 0; j < dangerousitems->MatrixDangerousItems[i].size(); j++)
+		{
+			window->draw(dangerousitems->MatrixDangerousItems[i][j]);
 		}
 	}
 
@@ -325,7 +334,11 @@ void Game::Render()
 	lblScore.setFont(font);
 	lblScore.setString(ssScore.str());
 
-	
+	for (size_t i = 0; i < Enemy.size(); i++)
+	{
+		Enemy[i]->Draw(*window);
+	}
+
 	player->Draw(*window);
 	window->draw(lblScore);
 	window->draw(gold_coin);
@@ -828,3 +841,120 @@ void Game::CheckCollision5(sf::Vector2f& direction, float p)
 	}
 }
 
+void Game::CheckCollision6(sf::Vector2f& direction, float p)
+{
+	float deltax;
+	float deltay;
+	float intersectX;
+	float intersectY;
+
+	for (size_t x = 0; x < Enemy.size(); x++)
+	{
+
+		for (size_t i = 0; i < this->level->Matrix.size(); i++)
+		{
+			for (size_t j = 0; j < this->level->Matrix[i].size(); j++)
+			{
+				sf::Vector2f thisposition = this->level->Matrix[i][j].getPosition();
+				sf::Vector2f otherposition = this->Enemy[x]->GetPosition();
+				sf::Vector2f thishalfsize(this->level->Matrix[i][j].getGlobalBounds().width / 2.0f, (level->Matrix[i][j].getGlobalBounds().height) / 2.0f);
+				sf::Vector2f otherhalfsize = this->Enemy[x]->body.getSize() / 2.0f;
+
+				bool t;
+
+				deltax = otherposition.x - thisposition.x;
+				deltay = otherposition.y - thisposition.y;
+
+				intersectX = std::abs(deltax) - (otherhalfsize.x + thishalfsize.x);
+				intersectY = std::abs(deltay) - (otherhalfsize.y + thishalfsize.y);
+
+				if (intersectX < 0.0f && intersectY < 0.0f)
+				{
+					p = std::min(std::max(p, 0.0f), 1.0f);
+
+					if (intersectX > intersectY)
+					{
+						if (deltax > 0.0f)
+						{
+							this->level->Matrix[i][j].move(intersectX * (1.0f - p), 0.0f);
+							this->Enemy[x]->body.move(-intersectX * p, 0.0f);
+							Enemy[x]->rotation2();
+							direction.x = 1.0f;
+							direction.y = 0.0f;
+						}
+						else
+						{
+							this->level->Matrix[i][j].move(-intersectX * (1.0f - p), 0.0f);
+							this->Enemy[x]->body.move(intersectX * p, 0.0f);
+							Enemy[x]->rotation1();
+							direction.x = -1.0f;
+							direction.y = 0.0f;
+						}
+					}
+					else
+					{
+						if (deltay > 0.0f)
+						{
+							this->level->Matrix[i][j].move(0.0f, intersectY * (1.0f - p));
+							this->Enemy[x]->body.move(0.0f, -intersectY * p);
+
+							direction.x = 0.0f;
+							direction.y = 1.0f;
+						}
+						else
+						{
+							this->level->Matrix[i][j].move(0.0f, -intersectY * (1.0f - p));
+							this->Enemy[x]->body.move(0.0f, intersectY * p);
+
+							direction.x = 0.0f;
+							direction.y = -1.0f;
+						}
+					}
+
+					t = true;
+
+				}
+				else {
+					t = false;
+				}
+				if (t == true)
+				{
+					this->Enemy[x]->OnCollision(direction);
+				}
+			}
+
+		}
+	}
+}
+
+void Game::loadEnemies()
+{
+	std::ifstream file("enemies.txt");
+	std::string charLine;
+	std::vector<char> mapLine;
+	if (file.is_open())
+	{
+		while (file.good())
+		{
+			getline(file, charLine);
+			for (int i = 0; i < charLine.length(); i++)
+			{
+				mapLine.push_back(charLine[i]);
+			}
+			Arrangement.push_back(mapLine);
+			mapLine.clear();
+			charLine.clear();
+		}
+	}
+
+	for (int i = 0; i < Arrangement.size(); i++)
+	{
+		for (int j = 0; j < Arrangement[i].size(); j++)
+		{
+			if (Arrangement[i][j] == '1')
+			{
+				Enemy.emplace_back(std::make_unique<Enemies>(&enemyTexture, sf::Vector2u(18, 1), 0.3f, 200.0f, 200.0f, (j * 128), (i * 128)));
+			}
+		}
+	}
+}

@@ -4,6 +4,9 @@
 #include <iostream>
 #include <vector>
 #include <map>
+#include <fstream>
+#include <string>
+#include "Enemies.h"
 #include "Player.h"
 #include "Platform.h"
 #include "Level.h"
@@ -36,8 +39,10 @@ public:
 	sf::Vector2f direction3;
 	sf::Vector2f direction4;
 	sf::Vector2f direction5;
+	sf::Vector2f direction6;
 	float deltaTime = 0.0f;
 	sf::Texture playerTexture;
+	sf::Texture enemyTexture;
 	std::vector<Platform> platforms;
 	std::vector<Platform> platforms2;
 	Collider col = player->GetCollider();
@@ -59,6 +64,9 @@ public:
 	sf::Texture filenull;
 	sf::Sprite gold_coin;
 	sf::Texture coin_gold;
+	std::vector<std::unique_ptr<Enemies>> Enemy;
+	std::vector<std::vector<char>> Arrangement;
+
 	Game();
 	~Game();
 	void loadTextures();
@@ -72,6 +80,8 @@ public:
 	void CheckCollision3(sf::Vector2f& direction, float p);
 	void CheckCollision4(sf::Vector2f& direction, float p);
 	void CheckCollision5(sf::Vector2f& direction, float p);
+	void CheckCollision6(sf::Vector2f& direction, float p);
 	
+	void loadEnemies();
 };
 
