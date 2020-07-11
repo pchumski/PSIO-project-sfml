@@ -1,7 +1,9 @@
 #pragma once
 #include <SFML/Graphics.hpp>
+#include <SFML/Audio.hpp>
 #include "Animation.h"
 #include "Collider.h"
+
 
 class Player
 {
@@ -17,6 +19,8 @@ public:
 	Collider GetCollider() { return Collider(body); }
 	sf::RectangleShape body;
 	int hp = 3;
+	sf::Sound sound1;
+	sf::SoundBuffer buffer1;
 private:
 	//sf::RectangleShape body;
 	Animation animation;

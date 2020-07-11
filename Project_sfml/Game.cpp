@@ -11,6 +11,7 @@ Game::Game()
 	coin = new Coin(CoinTextures);
 	view = new sf::View(sf::Vector2f(0.0f, 0.0f), sf::Vector2f(VIEW_HEIGHT, VIEW_HEIGHT));
 	dangerousitems = new DangerousItems(DangerousTextures);
+	newbox = new NewBox(NewBoxTextures);
 }
 
 Game::~Game()
@@ -20,6 +21,7 @@ Game::~Game()
 	delete three;
 	delete four;
 	delete five;
+	delete six;
 	delete window;
 	delete player;
 	delete level;
@@ -193,10 +195,27 @@ void Game::loadTextures()
 	coin_gold.loadFromFile("coin_gold.png");
 	gold_coin.setTexture(coin_gold);
 	gold_coin.setScale(0.5f, 0.5f);
+
+	six = new sf::Texture;
+	six->loadFromFile("box.png");
+	NewBoxTextures['1'] = six;
 }
 
 void Game::loadData()
 {
+	music.openFromFile("music.ogg");
+	music.setVolume(10);
+	music.setLoop(true);
+	music.play();
+
+	buffer1.loadFromFile("coin.wav");
+	sound1.setBuffer(buffer1);
+	sound1.setMinDistance(2);
+
+	buffer2.loadFromFile("hurt1.wav");
+	sound2.setBuffer(buffer2);
+	sound2.setMinDistance(1);
+
 	loadTextures();
 	loadEnemies();
 }
@@ -231,7 +250,64 @@ void Game::Update()
 					printf("%c", evnt.text.unicode);
 				}*/
 		}
+
+		if (evnt.type == sf::Event::MouseButtonPressed)
+		{
+			if (evnt.mouseButton.button == sf::Mouse::Right) {
+				//sf::Vector2f(static_cast<float>(mouse_position.x), static_cast<float>(mouse_position.y))
+				sf::Vector2i mouse_position = sf::Mouse::getPosition(*window);
+				sf::Vector2f mouse_world = window->mapPixelToCoords(mouse_position, *view);
+				for (size_t i = 0; i < this->newbox->MatrixNewBox.size(); i++)
+				{
+					for (size_t j = 0; j < this->newbox->MatrixNewBox[i].size(); j++)
+					{
+						/*std::cout << mouse_position.x << " pozycja x " << std::endl;
+						std::cout << mouse_position.y << " pozycja y " << std::endl;*/
+
+						if (this->newbox->MatrixNewBox[i][j].getGlobalBounds().contains(float(mouse_world.x), float(mouse_world.y)))
+						{
+							if (this->newbox->MatrixNewBox[i][j].getScale().x > 0.5f && this->newbox->MatrixNewBox[i][j].getScale().y > 0.5f)
+							{
+								this->newbox->MatrixNewBox[i][j].setScale(this->newbox->MatrixNewBox[i][j].getScale().x * 0.5f, this->newbox->MatrixNewBox[i][j].getScale().y * 0.5f);
+								//this->newbox->MatrixNewBox[i][j].move(0.0f, -5.0f);
+								this->newbox->MatrixNewBox[i][j].setOrigin(this->newbox->MatrixNewBox[i][j].getGlobalBounds().height/16, this->newbox->MatrixNewBox[i][j].getGlobalBounds().width/16);
+							}
+						}
+					}
+
+				}
+
+			}
+
+			if (evnt.mouseButton.button == sf::Mouse::Left) {
+				//sf::Vector2f(static_cast<float>(mouse_position.x), static_cast<float>(mouse_position.y))
+				sf::Vector2i mouse_position = sf::Mouse::getPosition(*window);
+				sf::Vector2f mouse_world = window->mapPixelToCoords(mouse_position, *view);
+				for (size_t i = 0; i < this->newbox->MatrixNewBox.size(); i++)
+				{
+					for (size_t j = 0; j < this->newbox->MatrixNewBox[i].size(); j++)
+					{
+						/*std::cout << mouse_position.x << " pozycja x " << std::endl;
+						std::cout << mouse_position.y << " pozycja y " << std::endl;*/
+
+						if (this->newbox->MatrixNewBox[i][j].getGlobalBounds().contains(float(mouse_world.x), float(mouse_world.y)))
+						{
+							if (this->newbox->MatrixNewBox[i][j].getScale().x < 1.0f && this->newbox->MatrixNewBox[i][j].getScale().y < 1.0f)
+							{
+								this->newbox->MatrixNewBox[i][j].setScale(this->newbox->MatrixNewBox[i][j].getScale().x * 2.0f, this->newbox->MatrixNewBox[i][j].getScale().y * 2.0f);
+								//this->newbox->MatrixNewBox[i][j].move(0.0f, -5.0f);
+								this->newbox->MatrixNewBox[i][j].setOrigin(this->newbox->MatrixNewBox[i][j].getGlobalBounds().height / 4, this->newbox->MatrixNewBox[i][j].getGlobalBounds().width / 4);
+							}
+						}
+					}
+
+				}
+
+			}
+		}
+
 	}
+
 
 	for (size_t i = 0; i < Enemy.size(); i++)
 	{
@@ -257,6 +333,10 @@ void Game::Update()
 	CheckCollision7(direction6, 1.0f);
 	CheckCollision8(direction6, 1.0f);
 	CheckCollision9(direction6, 1.0f);
+	CheckCollision10(direction6, 0.5f);
+	CheckCollision11(direction6, 1.0f);
+	CheckCollision12(direction6, 1.0f);
+	CheckCollision13(direction6, 0.5f);
 }
 
 void Game::Render()
@@ -315,6 +395,19 @@ void Game::Render()
 		}
 	}
 
+	for (int i = 0; i < newbox->MatrixNewBox.size(); i++)
+	{
+		for (int j = 0; j < newbox->MatrixNewBox[i].size(); j++)
+		{
+			window->draw(newbox->MatrixNewBox[i][j]);
+		}
+	}
+
+	for (size_t i = 0; i < Enemy.size(); i++)
+	{
+		Enemy[i]->Draw(*window);
+	}
+
 	for (int i = 0; i < dangerousitems->MatrixDangerousItems.size(); i++)
 	{
 		for (int j = 0; j < dangerousitems->MatrixDangerousItems[i].size(); j++)
@@ -337,10 +430,7 @@ void Game::Render()
 	lblScore.setFont(font);
 	lblScore.setString(ssScore.str());
 
-	for (size_t i = 0; i < Enemy.size(); i++)
-	{
-		Enemy[i]->Draw(*window);
-	}
+	
 
 	player->Draw(*window);
 	window->draw(lblScore);
@@ -383,7 +473,7 @@ void Game::ResizeView(const sf::RenderWindow& window, sf::View& view)
 	}
 }
 
-void Game::CheckCollision1(sf::Vector2f& direction, float p)
+void Game::CheckCollision1(sf::Vector2f& direction, float p)//kolizja gracza z map¹
 {
 	float deltax;
 	float deltay;
@@ -467,7 +557,7 @@ void Game::CheckCollision1(sf::Vector2f& direction, float p)
 	}
 }
 
-void Game::CheckCollision2(sf::Vector2f& direction, float p)
+void Game::CheckCollision2(sf::Vector2f& direction, float p)//kolizja gracza ze skrzynk¹
 {
 	float deltax;
 	float deltay;
@@ -551,7 +641,7 @@ void Game::CheckCollision2(sf::Vector2f& direction, float p)
 	}
 }
 
-void Game::CheckCollision3(sf::Vector2f& direction, float p)
+void Game::CheckCollision3(sf::Vector2f& direction, float p)//kolizja gracza z monet¹
 {
 	float deltax;
 	float deltay;
@@ -628,7 +718,8 @@ void Game::CheckCollision3(sf::Vector2f& direction, float p)
 			}
 			if (t == true)
 			{
-				score++;
+				sound1.play();
+				score += 10;
 				ssScore.str("");
 				ssScore << score;
 				lblScore.setString(ssScore.str());
@@ -642,7 +733,7 @@ void Game::CheckCollision3(sf::Vector2f& direction, float p)
 	}
 }
 
-void Game::CheckCollision4(sf::Vector2f& direction, float p)
+void Game::CheckCollision4(sf::Vector2f& direction, float p)//kolizja skrzynki z map¹ i jej grawitacja
 {
 
 
@@ -728,7 +819,7 @@ void Game::CheckCollision4(sf::Vector2f& direction, float p)
 						}
 						else
 						{
-							this->items->MatrixItems[a][b].move(0.0f, 0.8f * deltaTime);
+							this->items->MatrixItems[a][b].move(0.0f, 0.5f * deltaTime);
 						}
 				}
 			}
@@ -737,7 +828,7 @@ void Game::CheckCollision4(sf::Vector2f& direction, float p)
 
 }
 
-void Game::CheckCollision5(sf::Vector2f& direction, float p)
+void Game::CheckCollision5(sf::Vector2f& direction, float p)//kolizja gracza z wod¹
 {
 	/*float deltax;
 	float deltay;
@@ -752,6 +843,7 @@ void Game::CheckCollision5(sf::Vector2f& direction, float p)
 
 			if (this->player->body.getGlobalBounds().intersects(this->dangerousitems->MatrixDangerousItems[i][j].getGlobalBounds()))
 			{
+				sound2.play();
 				player->hp -= 1;
 				player->body.setPosition(3500.0f, 2300.0f);
 			}
@@ -844,7 +936,7 @@ void Game::CheckCollision5(sf::Vector2f& direction, float p)
 	}
 }
 
-void Game::CheckCollision6(sf::Vector2f& direction, float p)
+void Game::CheckCollision6(sf::Vector2f& direction, float p)//kolizja przeciwnika z map¹
 {
 	float deltax;
 	float deltay;
@@ -930,7 +1022,7 @@ void Game::CheckCollision6(sf::Vector2f& direction, float p)
 	}
 }
 
-void Game::CheckCollision7(sf::Vector2f& direction, float p)
+void Game::CheckCollision7(sf::Vector2f& direction, float p)//kolizja przeciwnika z otoczeniem
 {
 	float deltax;
 	float deltay;
@@ -1016,7 +1108,7 @@ void Game::CheckCollision7(sf::Vector2f& direction, float p)
 	}
 }
 
-void Game::CheckCollision8(sf::Vector2f& direction, float p)
+void Game::CheckCollision8(sf::Vector2f& direction, float p)//kolizja przeciwnika ze skrzynk¹
 {
 	float deltax;
 	float deltay;
@@ -1102,7 +1194,7 @@ void Game::CheckCollision8(sf::Vector2f& direction, float p)
 	}
 }
 
-void Game::CheckCollision9(sf::Vector2f& direction, float p)
+void Game::CheckCollision9(sf::Vector2f& direction, float p)//kolizja gracza z przeciwnikiem
 {
 	float deltax;
 	float deltay;
@@ -1130,6 +1222,7 @@ void Game::CheckCollision9(sf::Vector2f& direction, float p)
 
 					if (intersectX > intersectY)
 					{
+						sound2.play();
 						if (deltax > 0.0f)
 						{
 							this->player->body.move(intersectX * (1.0f - p), 0.0f);
@@ -1184,6 +1277,363 @@ void Game::CheckCollision9(sf::Vector2f& direction, float p)
 					this->player->OnCollision(direction);
 				}
 			
+	}
+}
+
+void Game::CheckCollision10(sf::Vector2f& direction, float p)
+{
+	float deltax;
+	float deltay;
+	float intersectX;
+	float intersectY;
+
+
+	for (size_t i = 0; i < this->newbox->MatrixNewBox.size(); i++)
+	{
+		for (size_t j = 0; j < this->newbox->MatrixNewBox[i].size(); j++)
+		{
+
+
+			sf::Vector2f thisposition = this->newbox->MatrixNewBox[i][j].getPosition();
+			sf::Vector2f otherposition = this->player->GetPosition();
+			sf::Vector2f thishalfsize(this->newbox->MatrixNewBox[i][j].getGlobalBounds().width / 2.0f, newbox->MatrixNewBox[i][j].getGlobalBounds().height / 2.0f);
+			sf::Vector2f otherhalfsize = this->player->body.getSize() / 2.0f;
+			bool t;
+
+			deltax = otherposition.x - thisposition.x;
+			deltay = otherposition.y - thisposition.y;
+
+			intersectX = std::abs(deltax) - (otherhalfsize.x + thishalfsize.x);
+			intersectY = std::abs(deltay) - (otherhalfsize.y + thishalfsize.y);
+
+			if (intersectX < 0.0f && intersectY < 0.0f)
+			{
+				p = std::min(std::max(p, 0.0f), 1.0f);
+
+				if (intersectX > intersectY)
+				{
+					if (deltax > 0.0f)
+					{
+						this->newbox->MatrixNewBox[i][j].move(intersectX * (1.0f - p), 0.0f);
+						this->player->body.move(-intersectX * p, 0.0f);
+
+						direction.x = 1.0f;
+						direction.y = 0.0f;
+					}
+					else
+					{
+						this->newbox->MatrixNewBox[i][j].move(-intersectX * (1.0f - p), 0.0f);
+						this->player->body.move(intersectX * p, 0.0f);
+
+						direction.x = -1.0f;
+						direction.y = 0.0f;
+					}
+				}
+				else
+				{
+					if (deltay > 0.0f)
+					{
+						this->newbox->MatrixNewBox[i][j].move(0.0f, intersectY * (1.0f - p));
+						this->player->body.move(0.0f, -intersectY * p);
+
+						direction.x = 0.0f;
+						direction.y = 1.0f;
+					}
+					else
+					{
+						this->newbox->MatrixNewBox[i][j].move(0.0f, -intersectY * (1.0f - p));
+						this->player->body.move(0.0f, intersectY * p);
+
+						direction.x = 0.0f;
+						direction.y = -1.0f;
+					}
+				}
+				//return true;
+				t = true;
+
+			}
+			else {
+				t = false;
+			}
+			if (t == true)
+			{
+				this->player->OnCollision(direction);
+			}
+		}
+
+	}
+}
+
+void Game::CheckCollision11(sf::Vector2f& direction, float p)
+{
+	for (size_t i = 0; i < this->level->Matrix.size(); i++)
+	{
+		for (size_t j = 0; j < this->level->Matrix[i].size(); j++)
+		{
+
+			for (size_t a = 0; a < this->newbox->MatrixNewBox.size(); a++) {
+				for (size_t b = 0; b < this->newbox->MatrixNewBox[a].size(); b++)
+				{
+
+					sf::Vector2f thisposition = this->level->Matrix[i][j].getPosition();
+					sf::Vector2f thishalfsize(this->level->Matrix[i][j].getGlobalBounds().width / 2.0f, this->level->Matrix[i][j].getGlobalBounds().height / 2.0f);
+					sf::Vector2f otherposition = this->newbox->MatrixNewBox[a][b].getPosition();
+					sf::Vector2f otherhalfsize(this->newbox->MatrixNewBox[a][b].getGlobalBounds().width / 2.0f, this->newbox->MatrixNewBox[a][b].getGlobalBounds().height / 2.0f);
+					bool t;
+
+					float deltax;
+					float deltay;
+					float intersectX;
+					float intersectY;
+
+					deltax = otherposition.x - thisposition.x;
+					deltay = otherposition.y - thisposition.y;
+
+					intersectX = std::abs(deltax) - (otherhalfsize.x + thishalfsize.x);
+					intersectY = std::abs(deltay) - (otherhalfsize.y + thishalfsize.y);
+
+					if (intersectX < 1.0f && intersectY < 1.0f)
+					{
+						p = std::min(std::max(p, 0.0f), 1.0f);
+
+						if (intersectX > intersectY)
+						{
+							if (deltax > 0.0f)
+							{
+								this->level->Matrix[i][j].move(intersectX * (1.0f - p), 0.0f);
+								this->newbox->MatrixNewBox[a][b].move(-intersectX * p, 0.0f);
+
+								direction.x = 1.0f;
+								direction.y = 0.0f;
+							}
+							else
+							{
+								this->level->Matrix[i][j].move(-intersectX * (1.0f - p), 0.0f);
+								this->newbox->MatrixNewBox[a][b].move(intersectX * p, 0.0f);
+
+								direction.x = -1.0f;
+								direction.y = 0.0f;
+							}
+						}
+						else
+						{
+							if (deltay > 0.0f)
+							{
+								this->level->Matrix[i][j].move(0.0f, intersectY * (1.0f - p));
+								this->newbox->MatrixNewBox[a][b].move(0.0f, -intersectY * p);
+
+								direction.x = 0.0f;
+								direction.y = 1.0f;
+							}
+							else
+							{
+								this->level->Matrix[i][j].move(0.0f, -intersectY * (1.0f - p));
+								this->newbox->MatrixNewBox[a][b].move(0.0f, intersectY * p);
+
+								direction.x = 0.0f;
+								direction.y = -1.0f;
+							}
+						}
+
+						t = true;
+
+					}
+					else {
+						t = false;
+					}
+
+					if (t == true)
+					{
+						this->newbox->OnCollision1(direction, a, b);
+					}
+					else
+					{
+						this->newbox->MatrixNewBox[a][b].move(0.0f, 0.5f * deltaTime);
+					}
+				}
+			}
+		}
+	}
+}
+
+void Game::CheckCollision12(sf::Vector2f& direction, float p)
+{
+	float deltax;
+	float deltay;
+	float intersectX;
+	float intersectY;
+
+	for (size_t x = 0; x < Enemy.size(); x++)
+	{
+
+		for (size_t i = 0; i < this->newbox->MatrixNewBox.size(); i++)
+		{
+			for (size_t j = 0; j < this->newbox->MatrixNewBox[i].size(); j++)
+			{
+				sf::Vector2f thisposition = this->newbox->MatrixNewBox[i][j].getPosition();
+				sf::Vector2f otherposition = this->Enemy[x]->GetPosition();
+				sf::Vector2f thishalfsize(this->newbox->MatrixNewBox[i][j].getGlobalBounds().width / 2.0f, (newbox->MatrixNewBox[i][j].getGlobalBounds().height) / 2.0f);
+				sf::Vector2f otherhalfsize = this->Enemy[x]->body.getSize() / 2.0f;
+
+				bool t;
+
+				deltax = otherposition.x - thisposition.x;
+				deltay = otherposition.y - thisposition.y;
+
+				intersectX = std::abs(deltax) - (otherhalfsize.x + thishalfsize.x);
+				intersectY = std::abs(deltay) - (otherhalfsize.y + thishalfsize.y);
+
+				if (intersectX < 0.0f && intersectY < 0.0f)
+				{
+					p = std::min(std::max(p, 0.0f), 1.0f);
+
+					if (intersectX > intersectY)
+					{
+						if (deltax > 0.0f)
+						{
+							this->newbox->MatrixNewBox[i][j].move(intersectX * (1.0f - p), 0.0f);
+							this->Enemy[x]->body.move(-intersectX * p, 0.0f);
+							Enemy[x]->rotation2();
+							direction.x = 1.0f;
+							direction.y = 0.0f;
+						}
+						else
+						{
+							this->newbox->MatrixNewBox[i][j].move(-intersectX * (1.0f - p), 0.0f);
+							this->Enemy[x]->body.move(intersectX * p, 0.0f);
+							Enemy[x]->rotation1();
+							direction.x = -1.0f;
+							direction.y = 0.0f;
+						}
+					}
+					else
+					{
+						if (deltay > 0.0f)
+						{
+							this->newbox->MatrixNewBox[i][j].move(0.0f, intersectY * (1.0f - p));
+							this->Enemy[x]->body.move(0.0f, -intersectY * p);
+
+							direction.x = 0.0f;
+							direction.y = 1.0f;
+						}
+						else
+						{
+							this->newbox->MatrixNewBox[i][j].move(0.0f, -intersectY * (1.0f - p));
+							this->Enemy[x]->body.move(0.0f, intersectY * p);
+
+							direction.x = 0.0f;
+							direction.y = -1.0f;
+						}
+					}
+
+					t = true;
+
+				}
+				else {
+					t = false;
+				}
+				if (t == true)
+				{
+					this->Enemy[x]->OnCollision(direction);
+				}
+			}
+
+		}
+	}
+}
+
+void Game::CheckCollision13(sf::Vector2f& direction, float p)
+{
+	for (size_t i = 0; i < this->newbox->MatrixNewBox.size(); i++)
+	{
+		for (size_t j = 0; j < this->newbox->MatrixNewBox[i].size(); j++)
+		{
+
+			for (size_t a = 0; a < this->items->MatrixItems.size(); a++) {
+				for (size_t b = 0; b < this->items->MatrixItems[a].size(); b++)
+				{
+
+					sf::Vector2f thisposition = this->newbox->MatrixNewBox[i][j].getPosition();
+					sf::Vector2f thishalfsize(this->newbox->MatrixNewBox[i][j].getGlobalBounds().width / 2.0f, this->newbox->MatrixNewBox[i][j].getGlobalBounds().height / 2.0f);
+					sf::Vector2f otherposition = this->items->MatrixItems[a][b].getPosition();
+					sf::Vector2f otherhalfsize(this->items->MatrixItems[a][b].getGlobalBounds().width / 2.0f, this->items->MatrixItems[a][b].getGlobalBounds().height / 2.0f);
+					bool t;
+
+					float deltax;
+					float deltay;
+					float intersectX;
+					float intersectY;
+
+					deltax = otherposition.x - thisposition.x;
+					deltay = otherposition.y - thisposition.y;
+
+					intersectX = std::abs(deltax) - (otherhalfsize.x + thishalfsize.x);
+					intersectY = std::abs(deltay) - (otherhalfsize.y + thishalfsize.y);
+
+					if (intersectX < 1.0f && intersectY < 1.0f)
+					{
+						p = std::min(std::max(p, 0.0f), 1.0f);
+
+						if (intersectX > intersectY)
+						{
+							if (deltax > 0.0f)
+							{
+								this->newbox->MatrixNewBox[i][j].move(intersectX * (1.0f - p), 0.0f);
+								this->items->MatrixItems[a][b].move(-intersectX * p, 0.0f);
+
+								direction.x = 1.0f;
+								direction.y = 0.0f;
+							}
+							else
+							{
+								this->newbox->MatrixNewBox[i][j].move(-intersectX * (1.0f - p), 0.0f);
+								this->items->MatrixItems[a][b].move(intersectX * p, 0.0f);
+
+								direction.x = -1.0f;
+								direction.y = 0.0f;
+							}
+						}
+						else
+						{
+							if (deltay > 0.0f)
+							{
+								this->newbox->MatrixNewBox[i][j].move(0.0f, intersectY * (1.0f - p));
+								this->items->MatrixItems[a][b].move(0.0f, -intersectY * p);
+
+								direction.x = 0.0f;
+								direction.y = 1.0f;
+							}
+							else
+							{
+								this->newbox->MatrixNewBox[i][j].move(0.0f, -intersectY * (1.0f - p));
+								this->items->MatrixItems[a][b].move(0.0f, intersectY * p);
+
+								direction.x = 0.0f;
+								direction.y = -1.0f;
+							}
+						}
+
+						t = true;
+
+					}
+					else {
+						t = false;
+					}
+
+					if (t == true)
+					{
+						this->items->OnCollision1(direction, a, b);
+						this->newbox->OnCollision1(direction, i, j);
+
+					}
+					else
+					{
+						this->items->MatrixItems[a][b].move(0.0f, 0.5f * deltaTime);
+						this->newbox->MatrixNewBox[i][j].move(0.0f, 0.5f * deltaTime);
+					}
+				}
+			}
+		}
 	}
 }
 

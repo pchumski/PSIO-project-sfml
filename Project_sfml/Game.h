@@ -1,5 +1,6 @@
 #pragma once
 #include <SFML/Graphics.hpp>
+#include <SFML/Audio.hpp>
 #include <sstream>
 #include <iostream>
 #include <vector>
@@ -14,6 +15,7 @@
 #include "Items.h"
 #include "Coin.h"
 #include "DangerousItems.h"
+#include "NewBox.h"
 
 class Game
 { 
@@ -26,6 +28,7 @@ public:
 	Items* items;
 	Coin* coin;
 	DangerousItems* dangerousitems;
+	NewBox* newbox;
 	sf::Event evnt;
 	sf::Clock clock;
 	std::map<char, sf::Texture*> GroundTextures;
@@ -33,6 +36,7 @@ public:
 	std::map<char, sf::Texture*> ItemsTextures;
 	std::map<char, sf::Texture*> CoinTextures;
 	std::map<char, sf::Texture*> DangerousTextures;
+	std::map<char, sf::Texture*> NewBoxTextures;
 	float VIEW_HEIGHT = 800.0f;
 	sf::Vector2f direction;
 	sf::Vector2f direction2;
@@ -54,6 +58,7 @@ public:
 	sf::Texture* three = new sf::Texture;
 	sf::Texture* four = new sf::Texture;
 	sf::Texture* five = new sf::Texture;
+	sf::Texture* six = new sf::Texture;
 	sf::Text lblScore;
 	std::ostringstream ssScore;
 	int score = 0;
@@ -67,6 +72,12 @@ public:
 	sf::Texture coin_gold;
 	std::vector<std::unique_ptr<Enemies>> Enemy;
 	std::vector<std::vector<char>> Arrangement;
+	sf::Music music;
+	sf::Sound sound1;
+	sf::SoundBuffer buffer1;
+	sf::Sound sound2;
+	sf::SoundBuffer buffer2;
+	
 
 	Game();
 	~Game();
@@ -85,6 +96,10 @@ public:
 	void CheckCollision7(sf::Vector2f& direction, float p);
 	void CheckCollision8(sf::Vector2f& direction, float p);
 	void CheckCollision9(sf::Vector2f& direction, float p);
+	void CheckCollision10(sf::Vector2f& direction, float p);
+	void CheckCollision11(sf::Vector2f& direction, float p);
+	void CheckCollision12(sf::Vector2f& direction, float p);
+	void CheckCollision13(sf::Vector2f& direction, float p);
 	
 	void loadEnemies();
 };

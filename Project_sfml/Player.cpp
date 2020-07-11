@@ -1,5 +1,6 @@
 #include "Player.h"
 
+
 Player::Player(sf::Texture* texture, sf::Vector2u imageCount, float switchTime, float speed, float jumpHeight) : 
 	animation(texture, imageCount, switchTime)
 {
@@ -7,6 +8,9 @@ Player::Player(sf::Texture* texture, sf::Vector2u imageCount, float switchTime, 
 	this->jumpHeight = jumpHeight;
 	row = 0;
 	faceRight = true;
+	buffer1.loadFromFile("jump.wav");
+	sound1.setBuffer(buffer1);
+	sound1.setMinDistance(1);
 
 	body.setSize(sf::Vector2f(128.0f, 128.0f));
 	//body.setOrigin(body.getSize() / 2.0f);
@@ -44,6 +48,7 @@ void Player::Update(float deltaTime)
 
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space) && canJump)
 	{
+		sound1.play();
 		canJump = false;
 		velocity.y = -sqrtf(3.0f * 981.0f * jumpHeight);
 	}
