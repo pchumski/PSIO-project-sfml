@@ -37,6 +37,7 @@ void Enemies::Update(float deltaTime)
 	{
 		faceRight = false;
 	}
+	velocity.y += 981.0f * deltaTime;
 
 	animation.Update(row, deltaTime, faceRight);
 	body.setTextureRect(animation.uvRect);
@@ -75,10 +76,10 @@ void Enemies::OnCollision(sf::Vector2f direction)
 
 void Enemies::rotation1()
 {
-	speed = -200;
+	speed = -100.0f;
 }
 
 void Enemies::rotation2()
 {
-	speed = 200.0f;
+	speed = 100.0f;
 }

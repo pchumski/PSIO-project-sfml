@@ -32,7 +32,8 @@ Game::~Game()
 void Game::loadTextures()
 {
 	playerTexture.loadFromFile("rogue5.png");
-	enemyTexture.loadFromFile("enemy.png");
+	enemyTexture1.loadFromFile("enemy1.png");
+	enemyTexture2.loadFromFile("enemy2.png");
 
 	background.loadFromFile("BG.png");
 
@@ -253,7 +254,9 @@ void Game::Update()
 	CheckCollision4(direction4, 1.0f);
 	CheckCollision5(direction5, 1.0f);
 	CheckCollision6(direction6, 1.0f);
-	
+	CheckCollision7(direction6, 1.0f);
+	CheckCollision8(direction6, 1.0f);
+	CheckCollision9(direction6, 1.0f);
 }
 
 void Game::Render()
@@ -725,7 +728,7 @@ void Game::CheckCollision4(sf::Vector2f& direction, float p)
 						}
 						else
 						{
-							this->items->MatrixItems[a][b].move(0.0f, 0.03f);
+							this->items->MatrixItems[a][b].move(0.0f, 0.8f * deltaTime);
 						}
 				}
 			}
@@ -927,6 +930,263 @@ void Game::CheckCollision6(sf::Vector2f& direction, float p)
 	}
 }
 
+void Game::CheckCollision7(sf::Vector2f& direction, float p)
+{
+	float deltax;
+	float deltay;
+	float intersectX;
+	float intersectY;
+
+	for (size_t x = 0; x < Enemy.size(); x++)
+	{
+
+		for (size_t i = 0; i < this->levelView->MatrixView.size(); i++)
+		{
+			for (size_t j = 0; j < this->levelView->MatrixView[i].size(); j++)
+			{
+				sf::Vector2f thisposition = this->levelView->MatrixView[i][j].getPosition();
+				sf::Vector2f otherposition = this->Enemy[x]->GetPosition();
+				sf::Vector2f thishalfsize(this->levelView->MatrixView[i][j].getGlobalBounds().width / 2.0f, (levelView->MatrixView[i][j].getGlobalBounds().height) / 2.0f);
+				sf::Vector2f otherhalfsize = this->Enemy[x]->body.getSize() / 2.0f;
+
+				bool t;
+
+				deltax = otherposition.x - thisposition.x;
+				deltay = otherposition.y - thisposition.y;
+
+				intersectX = std::abs(deltax) - (otherhalfsize.x + thishalfsize.x);
+				intersectY = std::abs(deltay) - (otherhalfsize.y + thishalfsize.y);
+
+				if (intersectX < 0.0f && intersectY < 0.0f)
+				{
+					p = std::min(std::max(p, 0.0f), 1.0f);
+
+					if (intersectX > intersectY)
+					{
+						if (deltax > 0.0f)
+						{
+							this->levelView->MatrixView[i][j].move(intersectX * (1.0f - p), 0.0f);
+							this->Enemy[x]->body.move(-intersectX * p, 0.0f);
+							Enemy[x]->rotation2();
+							direction.x = 1.0f;
+							direction.y = 0.0f;
+						}
+						else
+						{
+							this->levelView->MatrixView[i][j].move(-intersectX * (1.0f - p), 0.0f);
+							this->Enemy[x]->body.move(intersectX * p, 0.0f);
+							Enemy[x]->rotation1();
+							direction.x = -1.0f;
+							direction.y = 0.0f;
+						}
+					}
+					else
+					{
+						if (deltay > 0.0f)
+						{
+							this->levelView->MatrixView[i][j].move(0.0f, intersectY * (1.0f - p));
+							this->Enemy[x]->body.move(0.0f, -intersectY * p);
+
+							direction.x = 0.0f;
+							direction.y = 1.0f;
+						}
+						else
+						{
+							this->levelView->MatrixView[i][j].move(0.0f, -intersectY * (1.0f - p));
+							this->Enemy[x]->body.move(0.0f, intersectY * p);
+
+							direction.x = 0.0f;
+							direction.y = -1.0f;
+						}
+					}
+
+					t = true;
+
+				}
+				else {
+					t = false;
+				}
+				if (t == true)
+				{
+					this->Enemy[x]->OnCollision(direction);
+				}
+			}
+
+		}
+	}
+}
+
+void Game::CheckCollision8(sf::Vector2f& direction, float p)
+{
+	float deltax;
+	float deltay;
+	float intersectX;
+	float intersectY;
+
+	for (size_t x = 0; x < Enemy.size(); x++)
+	{
+
+		for (size_t i = 0; i < this->items->MatrixItems.size(); i++)
+		{
+			for (size_t j = 0; j < this->items->MatrixItems[i].size(); j++)
+			{
+				sf::Vector2f thisposition = this->items->MatrixItems[i][j].getPosition();
+				sf::Vector2f otherposition = this->Enemy[x]->GetPosition();
+				sf::Vector2f thishalfsize(this->items->MatrixItems[i][j].getGlobalBounds().width / 2.0f, (items->MatrixItems[i][j].getGlobalBounds().height) / 2.0f);
+				sf::Vector2f otherhalfsize = this->Enemy[x]->body.getSize() / 2.0f;
+
+				bool t;
+
+				deltax = otherposition.x - thisposition.x;
+				deltay = otherposition.y - thisposition.y;
+
+				intersectX = std::abs(deltax) - (otherhalfsize.x + thishalfsize.x);
+				intersectY = std::abs(deltay) - (otherhalfsize.y + thishalfsize.y);
+
+				if (intersectX < 0.0f && intersectY < 0.0f)
+				{
+					p = std::min(std::max(p, 0.0f), 1.0f);
+
+					if (intersectX > intersectY)
+					{
+						if (deltax > 0.0f)
+						{
+							this->items->MatrixItems[i][j].move(intersectX * (1.0f - p), 0.0f);
+							this->Enemy[x]->body.move(-intersectX * p, 0.0f);
+							Enemy[x]->rotation2();
+							direction.x = 1.0f;
+							direction.y = 0.0f;
+						}
+						else
+						{
+							this->items->MatrixItems[i][j].move(-intersectX * (1.0f - p), 0.0f);
+							this->Enemy[x]->body.move(intersectX * p, 0.0f);
+							Enemy[x]->rotation1();
+							direction.x = -1.0f;
+							direction.y = 0.0f;
+						}
+					}
+					else
+					{
+						if (deltay > 0.0f)
+						{
+							this->items->MatrixItems[i][j].move(0.0f, intersectY * (1.0f - p));
+							this->Enemy[x]->body.move(0.0f, -intersectY * p);
+
+							direction.x = 0.0f;
+							direction.y = 1.0f;
+						}
+						else
+						{
+							this->items->MatrixItems[i][j].move(0.0f, -intersectY * (1.0f - p));
+							this->Enemy[x]->body.move(0.0f, intersectY * p);
+
+							direction.x = 0.0f;
+							direction.y = -1.0f;
+						}
+					}
+
+					t = true;
+
+				}
+				else {
+					t = false;
+				}
+				if (t == true)
+				{
+					this->Enemy[x]->OnCollision(direction);
+				}
+			}
+
+		}
+	}
+}
+
+void Game::CheckCollision9(sf::Vector2f& direction, float p)
+{
+	float deltax;
+	float deltay;
+	float intersectX;
+	float intersectY;
+
+	for (size_t x = 0; x < Enemy.size(); x++)
+	{
+				sf::Vector2f thisposition = this->player->GetPosition();
+				sf::Vector2f otherposition = this->Enemy[x]->GetPosition();
+				sf::Vector2f thishalfsize(this->player->body.getSize() / 2.0f);
+				sf::Vector2f otherhalfsize = this->Enemy[x]->body.getSize() / 2.0f;
+
+				bool t;
+
+				deltax = otherposition.x - thisposition.x;
+				deltay = otherposition.y - thisposition.y;
+
+				intersectX = std::abs(deltax) - (otherhalfsize.x + thishalfsize.x);
+				intersectY = std::abs(deltay) - (otherhalfsize.y + thishalfsize.y);
+
+				if (intersectX < 0.0f && intersectY < 0.0f)
+				{
+					p = std::min(std::max(p, 0.0f), 1.0f);
+
+					if (intersectX > intersectY)
+					{
+						if (deltax > 0.0f)
+						{
+							this->player->body.move(intersectX * (1.0f - p), 0.0f);
+							this->Enemy[x]->body.move(-intersectX * p, 0.0f);
+							Enemy[x]->rotation2();
+							direction.x = 1.0f;
+							direction.y = 0.0f;
+
+							player->hp -= 1;
+							player->body.setPosition(3500.0f, 2300.0f);
+						}
+						else
+						{
+							this->player->body.move(-intersectX * (1.0f - p), 0.0f);
+							this->Enemy[x]->body.move(intersectX * p, 0.0f);
+							Enemy[x]->rotation1();
+							direction.x = -1.0f;
+							direction.y = 0.0f;
+
+							player->hp -= 1;
+							player->body.setPosition(3500.0f, 2300.0f);
+						}
+					}
+					else
+					{
+						if (deltay > 0.0f)
+						{
+							this->player->body.move(0.0f, intersectY * (1.0f - p));
+							this->Enemy[x]->body.move(0.0f, -intersectY * p);
+							Enemy.erase(Enemy.begin() + x);
+							direction.x = 0.0f;
+							direction.y = 1.0f;
+						}
+						else
+						{
+							this->player->body.move(0.0f, -intersectY * (1.0f - p));
+							this->Enemy[x]->body.move(0.0f, intersectY * p);
+							//Enemy.erase(Enemy.begin() + x);
+							direction.x = 0.0f;
+							direction.y = -1.0f;
+						}
+					}
+
+					t = true;
+
+				}
+				else {
+					t = false;
+				}
+				if (t == true)
+				{
+					this->player->OnCollision(direction);
+				}
+			
+	}
+}
+
 void Game::loadEnemies()
 {
 	std::ifstream file("enemies.txt");
@@ -953,7 +1213,11 @@ void Game::loadEnemies()
 		{
 			if (Arrangement[i][j] == '1')
 			{
-				Enemy.emplace_back(std::make_unique<Enemies>(&enemyTexture, sf::Vector2u(18, 1), 0.3f, 200.0f, 200.0f, (j * 128), (i * 128)));
+				Enemy.emplace_back(std::make_unique<Enemies>(&enemyTexture1, sf::Vector2u(18, 1), 0.3f, 100.0f, 200.0f, (j * 128), (i * 128)));
+			}
+			else if (Arrangement[i][j] == '2')
+			{
+				Enemy.emplace_back(std::make_unique<Enemies>(&enemyTexture2, sf::Vector2u(6, 2), 0.3f, 100.0f, 200.0f, (j * 128), (i * 128)));
 			}
 		}
 	}

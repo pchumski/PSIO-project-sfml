@@ -42,7 +42,8 @@ public:
 	sf::Vector2f direction6;
 	float deltaTime = 0.0f;
 	sf::Texture playerTexture;
-	sf::Texture enemyTexture;
+	sf::Texture enemyTexture1;
+	sf::Texture enemyTexture2;
 	std::vector<Platform> platforms;
 	std::vector<Platform> platforms2;
 	Collider col = player->GetCollider();
@@ -81,6 +82,9 @@ public:
 	void CheckCollision4(sf::Vector2f& direction, float p);
 	void CheckCollision5(sf::Vector2f& direction, float p);
 	void CheckCollision6(sf::Vector2f& direction, float p);
+	void CheckCollision7(sf::Vector2f& direction, float p);
+	void CheckCollision8(sf::Vector2f& direction, float p);
+	void CheckCollision9(sf::Vector2f& direction, float p);
 	
 	void loadEnemies();
 };
