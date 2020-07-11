@@ -16,6 +16,7 @@
 #include "Coin.h"
 #include "DangerousItems.h"
 #include "NewBox.h"
+#include "SpecialObjects.h"
 
 class Game
 { 
@@ -29,6 +30,7 @@ public:
 	Coin* coin;
 	DangerousItems* dangerousitems;
 	NewBox* newbox;
+	SpecialObjects* specialobjects;
 	sf::Event evnt;
 	sf::Clock clock;
 	std::map<char, sf::Texture*> GroundTextures;
@@ -37,13 +39,9 @@ public:
 	std::map<char, sf::Texture*> CoinTextures;
 	std::map<char, sf::Texture*> DangerousTextures;
 	std::map<char, sf::Texture*> NewBoxTextures;
+	std::map<char, sf::Texture*> SpecialObjectsTextures;
 	float VIEW_HEIGHT = 800.0f;
 	sf::Vector2f direction;
-	sf::Vector2f direction2;
-	sf::Vector2f direction3;
-	sf::Vector2f direction4;
-	sf::Vector2f direction5;
-	sf::Vector2f direction6;
 	float deltaTime = 0.0f;
 	sf::Texture playerTexture;
 	sf::Texture enemyTexture1;
@@ -77,6 +75,10 @@ public:
 	sf::SoundBuffer buffer1;
 	sf::Sound sound2;
 	sf::SoundBuffer buffer2;
+	sf::Sound sound3;
+	sf::SoundBuffer buffer3;
+	sf::Sound sound4;
+	sf::SoundBuffer buffer4;
 	
 
 	Game();
@@ -88,7 +90,7 @@ public:
 	void Render();
 	void ResizeView(const sf::RenderWindow& window, sf::View& view);
 	void CheckCollision1(sf::Vector2f& direction, float p);
-	void CheckCollision2(sf::Vector2f& direction2, float p);
+	void CheckCollision2(sf::Vector2f& direction, float p);
 	void CheckCollision3(sf::Vector2f& direction, float p);
 	void CheckCollision4(sf::Vector2f& direction, float p);
 	void CheckCollision5(sf::Vector2f& direction, float p);
@@ -100,6 +102,7 @@ public:
 	void CheckCollision11(sf::Vector2f& direction, float p);
 	void CheckCollision12(sf::Vector2f& direction, float p);
 	void CheckCollision13(sf::Vector2f& direction, float p);
+	void CheckCollision14(sf::Vector2f& direction, float p);
 	
 	void loadEnemies();
 };

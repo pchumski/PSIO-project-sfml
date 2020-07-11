@@ -12,6 +12,7 @@ Game::Game()
 	view = new sf::View(sf::Vector2f(0.0f, 0.0f), sf::Vector2f(VIEW_HEIGHT, VIEW_HEIGHT));
 	dangerousitems = new DangerousItems(DangerousTextures);
 	newbox = new NewBox(NewBoxTextures);
+	specialobjects = new SpecialObjects(SpecialObjectsTextures);
 }
 
 Game::~Game()
@@ -199,12 +200,16 @@ void Game::loadTextures()
 	six = new sf::Texture;
 	six->loadFromFile("box.png");
 	NewBoxTextures['1'] = six;
+
+	four = new sf::Texture;
+	four->loadFromFile("up1.png");
+	SpecialObjectsTextures['1'] = four;
 }
 
 void Game::loadData()
 {
 	music.openFromFile("music.ogg");
-	music.setVolume(10);
+	music.setVolume(25);
 	music.setLoop(true);
 	music.play();
 
@@ -212,9 +217,17 @@ void Game::loadData()
 	sound1.setBuffer(buffer1);
 	sound1.setMinDistance(2);
 
-	buffer2.loadFromFile("hurt1.wav");
+	buffer2.loadFromFile("ohno1.wav");
 	sound2.setBuffer(buffer2);
 	sound2.setMinDistance(1);
+
+	buffer3.loadFromFile("up.wav");
+	sound3.setBuffer(buffer3);
+	sound3.setMinDistance(2);
+
+	buffer4.loadFromFile("roar.wav");
+	sound4.setBuffer(buffer4);
+	sound4.setMinDistance(3);
 
 	loadTextures();
 	loadEnemies();
@@ -283,6 +296,16 @@ void Game::Update()
 				//sf::Vector2f(static_cast<float>(mouse_position.x), static_cast<float>(mouse_position.y))
 				sf::Vector2i mouse_position = sf::Mouse::getPosition(*window);
 				sf::Vector2f mouse_world = window->mapPixelToCoords(mouse_position, *view);
+
+				for (size_t x = 0; x < Enemy.size(); x++)
+				{
+					
+						if (this->Enemy[x]->body.getGlobalBounds().contains(float(mouse_world.x), float(mouse_world.y)))
+						{
+							sound4.play();
+						}
+				}
+
 				for (size_t i = 0; i < this->newbox->MatrixNewBox.size(); i++)
 				{
 					for (size_t j = 0; j < this->newbox->MatrixNewBox[i].size(); j++)
@@ -325,18 +348,19 @@ void Game::Update()
 				player->OnCollision(direction2);*/
 	
 	CheckCollision1(direction, 1.0f);
-	CheckCollision2(direction2, 0.5f);
-	CheckCollision3(direction3, 1.0f);
-	CheckCollision4(direction4, 1.0f);
-	CheckCollision5(direction5, 1.0f);
-	CheckCollision6(direction6, 1.0f);
-	CheckCollision7(direction6, 1.0f);
-	CheckCollision8(direction6, 1.0f);
-	CheckCollision9(direction6, 1.0f);
-	CheckCollision10(direction6, 0.5f);
-	CheckCollision11(direction6, 1.0f);
-	CheckCollision12(direction6, 1.0f);
-	CheckCollision13(direction6, 0.5f);
+	CheckCollision2(direction, 0.5f);
+	CheckCollision3(direction, 1.0f);
+	CheckCollision4(direction, 1.0f);
+	CheckCollision5(direction, 1.0f);
+	CheckCollision6(direction, 1.0f);
+	CheckCollision7(direction, 1.0f);
+	CheckCollision8(direction, 1.0f);
+	CheckCollision9(direction, 1.0f);
+	CheckCollision10(direction, 0.5f);
+	CheckCollision11(direction, 1.0f);
+	CheckCollision12(direction, 1.0f);
+	CheckCollision13(direction, 0.5f);
+	CheckCollision14(direction, 1.0f);
 }
 
 void Game::Render()
@@ -348,8 +372,8 @@ void Game::Render()
 	window->clear();
 	window->draw(BackGround);
 	window->setView(*view);
-	lblScore.setPosition(view->getCenter().x + 730, view->getCenter().y - 397);
-	gold_coin.setPosition(view->getCenter().x + 690, view->getCenter().y - 400);
+	lblScore.setPosition(view->getCenter().x + 700, view->getCenter().y - 397);
+	gold_coin.setPosition(view->getCenter().x + 660, view->getCenter().y - 399);
 
 	hp[0].setPosition(view->getCenter().x - 765, view->getCenter().y - 400);
 	hp[1].setPosition(view->getCenter().x - 725, view->getCenter().y - 400);
@@ -421,6 +445,14 @@ void Game::Render()
 		for (int j = 0; j < coin->MatrixCoin[i].size(); j++)
 		{
 			window->draw(coin->MatrixCoin[i][j]);
+		}
+	}
+
+	for (int i = 0; i < specialobjects->MatrixSpecialObjects.size(); i++)
+	{
+		for (int j = 0; j < specialobjects->MatrixSpecialObjects[i].size(); j++)
+		{
+			window->draw(specialobjects->MatrixSpecialObjects[i][j]);
 		}
 	}
 
@@ -1634,6 +1666,103 @@ void Game::CheckCollision13(sf::Vector2f& direction, float p)
 				}
 			}
 		}
+	}
+}
+
+void Game::CheckCollision14(sf::Vector2f& direction, float p)
+{
+	float deltax;
+	float deltay;
+	float intersectX;
+	float intersectY;
+
+
+	for (size_t i = 0; i < this->specialobjects->MatrixSpecialObjects.size(); i++)
+	{
+		for (size_t j = 0; j < this->specialobjects->MatrixSpecialObjects[i].size(); j++)
+		{
+
+
+			sf::Vector2f thisposition = this->specialobjects->MatrixSpecialObjects[i][j].getPosition();
+			sf::Vector2f otherposition = this->player->GetPosition();
+			sf::Vector2f thishalfsize(this->specialobjects->MatrixSpecialObjects[i][j].getGlobalBounds().width / 2.0f, specialobjects->MatrixSpecialObjects[i][j].getGlobalBounds().height / 2.0f);
+			sf::Vector2f otherhalfsize = this->player->body.getSize() / 2.0f;
+			bool t;
+
+			deltax = otherposition.x - thisposition.x;
+			deltay = otherposition.y - thisposition.y;
+
+			intersectX = std::abs(deltax) - (otherhalfsize.x + thishalfsize.x);
+			intersectY = std::abs(deltay) - (otherhalfsize.y + thishalfsize.y);
+
+			if (intersectX < 0.0f && intersectY < 0.0f)
+			{
+				p = std::min(std::max(p, 0.0f), 1.0f);
+
+				if (intersectX > intersectY)
+				{
+					if (deltax > 0.0f)
+					{
+						this->specialobjects->MatrixSpecialObjects[i][j].move(intersectX * (1.0f - p), 0.0f);
+						this->player->body.move(-intersectX * p, 0.0f);
+
+						direction.x = 1.0f;
+						direction.y = 0.0f;
+					}
+					else
+					{
+						this->specialobjects->MatrixSpecialObjects[i][j].move(-intersectX * (1.0f - p), 0.0f);
+						this->player->body.move(intersectX * p, 0.0f);
+
+						direction.x = -1.0f;
+						direction.y = 0.0f;
+					}
+				}
+				else
+				{
+					if (deltay > 0.0f)
+					{
+						this->specialobjects->MatrixSpecialObjects[i][j].move(0.0f, intersectY * (1.0f - p));
+						this->player->body.move(0.0f, -intersectY * p);
+
+						direction.x = 0.0f;
+						direction.y = 1.0f;
+					}
+					else
+					{
+						this->specialobjects->MatrixSpecialObjects[i][j].move(0.0f, -intersectY * (1.0f - p));
+						this->player->body.move(0.0f, intersectY * p);
+
+						direction.x = 0.0f;
+						direction.y = -1.0f;
+					}
+				}
+				//return true;
+				t = true;
+
+			}
+			else {
+				t = false;
+			}
+			if (t == true)
+			{
+				sound3.play();
+				if (player->hp < 3)
+				{
+					player->hp += 1;
+				}
+				else
+				{
+					score += 100;
+					ssScore.str("");
+					ssScore << score;
+					lblScore.setString(ssScore.str());
+				}
+				specialobjects->MatrixSpecialObjects[i].erase(specialobjects->MatrixSpecialObjects[i].begin() + j, specialobjects->MatrixSpecialObjects[i].begin() + j + 1);
+
+			}
+		}
+
 	}
 }
 
