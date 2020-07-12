@@ -35,8 +35,8 @@ Game::~Game()
 void Game::loadTextures()
 {
 	playerTexture.loadFromFile("rogue5.png");
-	enemyTexture1.loadFromFile("enemy1.png");
-	enemyTexture2.loadFromFile("enemy2.png");
+	enemyTexture1.loadFromFile("enemy3.png");
+	enemyTexture2.loadFromFile("enemy4.png");
 
 	background.loadFromFile("BG.png");
 
@@ -209,7 +209,7 @@ void Game::loadTextures()
 void Game::loadData()
 {
 	music.openFromFile("music.ogg");
-	music.setVolume(25);
+	music.setVolume(20);
 	music.setLoop(true);
 	music.play();
 
@@ -228,6 +228,14 @@ void Game::loadData()
 	buffer4.loadFromFile("roar.wav");
 	sound4.setBuffer(buffer4);
 	sound4.setMinDistance(3);
+
+	buffer5.loadFromFile("rick.wav");
+	sound5.setBuffer(buffer5);
+	sound5.setMinDistance(2);
+
+	buffer6.loadFromFile("kill.wav");
+	sound6.setBuffer(buffer6);
+	sound6.setMinDistance(2);
 
 	loadTextures();
 	loadEnemies();
@@ -304,6 +312,11 @@ void Game::Update()
 						{
 							sound4.play();
 						}
+				}
+
+				if (this->player->body.getGlobalBounds().contains(float(mouse_world.x), float(mouse_world.y)))
+				{
+					sound5.play();
 				}
 
 				for (size_t i = 0; i < this->newbox->MatrixNewBox.size(); i++)
@@ -1282,6 +1295,11 @@ void Game::CheckCollision9(sf::Vector2f& direction, float p)//kolizja gracza z p
 					{
 						if (deltay > 0.0f)
 						{
+							sound6.play();
+							score += 50;
+							ssScore.str("");
+							ssScore << score;
+							lblScore.setString(ssScore.str());
 							this->player->body.move(0.0f, intersectY * (1.0f - p));
 							this->Enemy[x]->body.move(0.0f, -intersectY * p);
 							Enemy.erase(Enemy.begin() + x);
@@ -1792,11 +1810,11 @@ void Game::loadEnemies()
 		{
 			if (Arrangement[i][j] == '1')
 			{
-				Enemy.emplace_back(std::make_unique<Enemies>(&enemyTexture1, sf::Vector2u(18, 1), 0.3f, 100.0f, 200.0f, (j * 128), (i * 128)));
+				Enemy.emplace_back(std::make_unique<Enemies>(&enemyTexture1, sf::Vector2u(17, 1), 0.3f, 100.0f, 200.0f, (j * 128), (i * 128)));
 			}
 			else if (Arrangement[i][j] == '2')
 			{
-				Enemy.emplace_back(std::make_unique<Enemies>(&enemyTexture2, sf::Vector2u(6, 2), 0.3f, 100.0f, 200.0f, (j * 128), (i * 128)));
+				Enemy.emplace_back(std::make_unique<Enemies>(&enemyTexture2, sf::Vector2u(11, 1), 0.3f, 100.0f, 200.0f, (j * 128), (i * 128)));
 			}
 		}
 	}

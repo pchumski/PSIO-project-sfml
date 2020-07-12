@@ -10,7 +10,7 @@ Enemies::Enemies(sf::Texture* texture, sf::Vector2u imageCount, float switchTime
 	row = 0;
 	faceRight = true;
 
-	body.setSize(sf::Vector2f(128.0f, 128.0f));
+	body.setSize(sf::Vector2f(160.0f, 128.0f));
 	//body.setOrigin(body.getSize() / 2.0f);
 	body.setTexture(texture);
 	body.setPosition(positionX, positionY);

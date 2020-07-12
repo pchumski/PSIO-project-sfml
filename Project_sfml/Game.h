@@ -79,6 +79,10 @@ public:
 	sf::SoundBuffer buffer3;
 	sf::Sound sound4;
 	sf::SoundBuffer buffer4;
+	sf::Sound sound5;
+	sf::SoundBuffer buffer5;
+	sf::Sound sound6;
+	sf::SoundBuffer buffer6;
 	
 
 	Game();
