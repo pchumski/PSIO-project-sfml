@@ -10,7 +10,7 @@ public:
 	~Enemies();
 
 	void Update(float deltaTime);
-	void Draw(sf::RenderWindow& window);
+	void Draw(sf::RenderWindow *window);
 	void OnCollision(sf::Vector2f direction);
 
 	void rotation1();

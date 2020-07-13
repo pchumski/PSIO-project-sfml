@@ -45,9 +45,9 @@ void Enemies::Update(float deltaTime)
 
 }
 
-void Enemies::Draw(sf::RenderWindow& window)
+void Enemies::Draw(sf::RenderWindow *window)
 {
-	window.draw(body);
+	window->draw(body);
 }
 
 void Enemies::OnCollision(sf::Vector2f direction)
