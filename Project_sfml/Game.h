@@ -17,6 +17,7 @@
 #include "DangerousItems.h"
 #include "NewBox.h"
 #include "SpecialObjects.h"
+#include "NewCharacter.h"
 
 class Game
 { 
@@ -31,6 +32,7 @@ public:
 	DangerousItems* dangerousitems;
 	NewBox* newbox;
 	SpecialObjects* specialobjects;
+	NewCharacter* newcharacter;
 	sf::Event evnt;
 	sf::Clock clock;
 	std::map<char, sf::Texture*> GroundTextures;
@@ -44,6 +46,7 @@ public:
 	sf::Vector2f direction;
 	float deltaTime = 0.0f;
 	sf::Texture playerTexture;
+	sf::Texture newcharacterTexture;
 	sf::Texture enemyTexture1;
 	sf::Texture enemyTexture2;
 	std::vector<Platform> platforms;
@@ -83,7 +86,10 @@ public:
 	sf::SoundBuffer buffer5;
 	sf::Sound sound6;
 	sf::SoundBuffer buffer6;
-	 
+
+	sf::Texture texture;
+	
+	sf::Sprite sprite12;
 
 	Game();
 	~Game();
@@ -107,6 +113,7 @@ public:
 	void CheckCollision12(sf::Vector2f& direction, float p);
 	void CheckCollision13(sf::Vector2f& direction, float p);
 	void CheckCollision14(sf::Vector2f& direction, float p);
+	void CheckCollision15(sf::Vector2f& direction, float p);
 	
 	void loadEnemies();
 };

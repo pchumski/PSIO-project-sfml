@@ -13,6 +13,7 @@ Game::Game()
 	dangerousitems = new DangerousItems(DangerousTextures);
 	newbox = new NewBox(NewBoxTextures);
 	specialobjects = new SpecialObjects(SpecialObjectsTextures);
+	newcharacter = new NewCharacter(&newcharacterTexture, sf::Vector2u(6, 1), 0.3f, 200.0f, 200.0f);
 }
 
 Game::~Game()
@@ -35,6 +36,7 @@ Game::~Game()
 void Game::loadTextures()
 {
 	playerTexture.loadFromFile("rogue5.png");
+	newcharacterTexture.loadFromFile("rycerz12.png");
 	enemyTexture1.loadFromFile("enemy3.png");
 	enemyTexture2.loadFromFile("enemy4.png");
 
@@ -355,6 +357,7 @@ void Game::Update()
 	}
 
 	player->Update(deltaTime);
+	newcharacter->Update(deltaTime);
 
 	/*for(Platform& platform : platforms)
 			if(platform.GetCollider().CheckCollision(col, direction, 1.0f))
@@ -378,6 +381,7 @@ void Game::Update()
 	CheckCollision12(direction, 1.0f);
 	CheckCollision13(direction, 0.5f);
 	CheckCollision14(direction, 1.0f);
+	CheckCollision15(direction, 1.0f);
 }
 
 void Game::Render()
@@ -482,6 +486,7 @@ void Game::Render()
 	
 
 	player->Draw(*window);
+	newcharacter->Draw(*window);
 	window->draw(lblScore);
 	window->draw(gold_coin);
 	if (player->hp == 3)
@@ -507,7 +512,38 @@ void Game::Render()
 		window->draw(hp[3]);
 		window->draw(hp[4]);
 		window->draw(hp[5]);
+		sf::RenderWindow* window1;
+		window1 = new sf::RenderWindow(sf::VideoMode(600, 400), "Win");
+		texture.loadFromFile("gameover.png");
+		sprite12.setTexture(texture);
+		sprite12.setPosition(0, 0);
+
+		sf::Event evnt;
+
+		while (window1->isOpen())
+		{
+			while (window1->pollEvent(evnt)) {
+
+				switch (evnt.type) {
+
+				case sf::Event::Closed:
+					window1->close();
+					break;
+				}
+			}
+			if (sf::Keyboard::isKeyPressed(sf::Keyboard::Escape))
+			{
+				window1->close();
+			}
+
+
+			window1->clear();
+			window1->draw(sprite12);
+
+			window1->display();
+		}
 	}
+	
 	
 	window->display();
 }
@@ -1786,6 +1822,112 @@ void Game::CheckCollision14(sf::Vector2f& direction, float p)
 		}
 
 	}
+}
+
+void Game::CheckCollision15(sf::Vector2f& direction, float p)
+{
+	float deltax;
+	float deltay;
+	float intersectX;
+	float intersectY;
+
+			sf::Vector2f thisposition = this->player->GetPosition();
+			sf::Vector2f otherposition = this->newcharacter->GetPosition();
+			sf::Vector2f thishalfsize = this->player->body.getSize() / 2.0f;
+			sf::Vector2f otherhalfsize = this->newcharacter->body.getSize() / 2.0f;
+			bool t;
+
+			deltax = otherposition.x - thisposition.x;
+			deltay = otherposition.y - thisposition.y;
+
+			intersectX = std::abs(deltax) - (otherhalfsize.x + thishalfsize.x);
+			intersectY = std::abs(deltay) - (otherhalfsize.y + thishalfsize.y);
+
+			if (intersectX < 0.0f && intersectY < 0.0f)
+			{
+				p = std::min(std::max(p, 0.0f), 1.0f);
+
+				if (intersectX > intersectY)
+				{
+					if (deltax > 0.0f)
+					{
+						this->player->body.move(intersectX * (1.0f - p), 0.0f);
+						this->newcharacter->body.move(-intersectX * p, 0.0f);
+
+						direction.x = 1.0f;
+						direction.y = 0.0f;
+					}
+					else
+					{
+						this->player->body.move(-intersectX * (1.0f - p), 0.0f);
+						this->newcharacter->body.move(intersectX * p, 0.0f);
+
+						direction.x = -1.0f;
+						direction.y = 0.0f;
+					}
+				}
+				else
+				{
+					if (deltay > 0.0f)
+					{
+						this->player->body.move(0.0f, intersectY * (1.0f - p));
+						this->newcharacter->body.move(0.0f, -intersectY * p);
+
+						direction.x = 0.0f;
+						direction.y = 1.0f;
+					}
+					else
+					{
+						this->player->body.move(0.0f, -intersectY * (1.0f - p));
+						this->newcharacter->body.move(0.0f, intersectY * p);
+
+						direction.x = 0.0f;
+						direction.y = -1.0f;
+					}
+				}
+				//return true;
+				t = true;
+
+			}
+			else {
+				t = false;
+			}
+			if (t == true)
+			{
+				this->player->OnCollision(direction);
+
+				sf::RenderWindow* window;
+				window = new sf::RenderWindow(sf::VideoMode(600, 400), "Win");
+				texture.loadFromFile("win.png");
+				sprite12.setTexture(texture);
+				sprite12.setPosition(0, 0);
+				
+				sf::Event evnt;
+				
+				while (window->isOpen())
+				{
+					while (window->pollEvent(evnt)) {
+
+						switch (evnt.type) {
+
+						case sf::Event::Closed:
+							window->close();
+							break;
+						}
+					}
+					if (sf::Keyboard::isKeyPressed(sf::Keyboard::Escape))
+					{
+						window->close();
+					}
+
+
+					window->clear();
+					window->draw(sprite12);
+					
+					window->display();
+				}
+			}
+			
 }
 
 void Game::loadEnemies()
