@@ -83,7 +83,7 @@ public:
 	sf::SoundBuffer buffer5;
 	sf::Sound sound6;
 	sf::SoundBuffer buffer6;
-	
+	 
 
 	Game();
 	~Game();

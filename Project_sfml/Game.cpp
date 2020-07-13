@@ -209,7 +209,7 @@ void Game::loadTextures()
 void Game::loadData()
 {
 	music.openFromFile("music.ogg");
-	music.setVolume(20);
+	music.setVolume(25);
 	music.setLoop(true);
 	music.play();
 
@@ -344,6 +344,10 @@ void Game::Update()
 
 	}
 
+	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Escape))
+	{
+		window->close();
+	}
 
 	for (size_t i = 0; i < Enemy.size(); i++)
 	{
