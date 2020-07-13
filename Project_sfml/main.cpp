@@ -13,6 +13,7 @@ void Options()
 	sprite.setTexture(texture);
 	sprite.setPosition(0, 0);
 	sf::Event evnt;
+
 	while (window->isOpen())
 	{
 		while (window->pollEvent(evnt)) {
@@ -93,12 +94,12 @@ int main()
 					}
 					if (menu.menu[1].getGlobalBounds().contains(float(mouse_position.x), float(mouse_position.y)))
 					{
-
+						sound2.play();
 						Options();
 					}
 					if (menu.menu[2].getGlobalBounds().contains(float(mouse_position.x), float(mouse_position.y)))
 					{
-
+						sound2.play();
 						wndw->close();
 					}
 					//menu.MoveDown();
@@ -128,7 +129,6 @@ int main()
 					{
 						case 0:
 						{
-							std::cout << "Play button has been pressed" << std::endl;
 							sound1.play();
 							wndw->close();
 							menu.music_menu.pause();
@@ -143,14 +143,14 @@ int main()
 						}
 						case 1:
 						{
-							std::cout << "Option button has been pressed" << std::endl;
+							sound2.play();
 							Options();
 							break;
 						}
 						case 2:
 						{
+							sound2.play();
 							wndw->close();
-							
 							break;
 						}
 					}

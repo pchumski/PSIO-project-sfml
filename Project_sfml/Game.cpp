@@ -382,6 +382,13 @@ void Game::Update()
 	CheckCollision13(direction, 0.5f);
 	CheckCollision14(direction, 1.0f);
 	CheckCollision15(direction, 1.0f);
+
+	if (player->body.getGlobalBounds().top + player->body.getGlobalBounds().height >= 4000)
+	{
+		sound2.play();
+		player->hp -= 1;
+		player->body.setPosition(2675.0f, 3100.0f);
+	}
 }
 
 void Game::Render()
@@ -512,6 +519,7 @@ void Game::Render()
 		window->draw(hp[3]);
 		window->draw(hp[4]);
 		window->draw(hp[5]);
+		window->close();
 		sf::RenderWindow* window1;
 		window1 = new sf::RenderWindow(sf::VideoMode(600, 400), "Win");
 		texture.loadFromFile("gameover.png");
@@ -930,7 +938,7 @@ void Game::CheckCollision5(sf::Vector2f& direction, float p)//kolizja gracza z w
 			{
 				sound2.play();
 				player->hp -= 1;
-				player->body.setPosition(3500.0f, 2300.0f);
+				player->body.setPosition(2675.0f, 3100.0f);
 			}
 
 			/*sf::Vector2f thisposition = this->dangerousitems->MatrixDangerousItems[i][j].getPosition();
@@ -1317,7 +1325,7 @@ void Game::CheckCollision9(sf::Vector2f& direction, float p)//kolizja gracza z p
 							direction.y = 0.0f;
 
 							player->hp -= 1;
-							player->body.setPosition(3500.0f, 2300.0f);
+							player->body.setPosition(2675.0f, 3100.0f);
 						}
 						else
 						{
@@ -1328,7 +1336,7 @@ void Game::CheckCollision9(sf::Vector2f& direction, float p)//kolizja gracza z p
 							direction.y = 0.0f;
 
 							player->hp -= 1;
-							player->body.setPosition(3500.0f, 2300.0f);
+							player->body.setPosition(2675.0f, 3100.0f);
 						}
 					}
 					else
@@ -1895,36 +1903,37 @@ void Game::CheckCollision15(sf::Vector2f& direction, float p)
 			if (t == true)
 			{
 				this->player->OnCollision(direction);
-
-				sf::RenderWindow* window;
-				window = new sf::RenderWindow(sf::VideoMode(600, 400), "Win");
+				
+				window->close();
+				sf::RenderWindow* window2;
+				window2 = new sf::RenderWindow(sf::VideoMode(600, 400), "Win");
 				texture.loadFromFile("win.png");
 				sprite12.setTexture(texture);
 				sprite12.setPosition(0, 0);
 				
 				sf::Event evnt;
 				
-				while (window->isOpen())
+				while (window2->isOpen())
 				{
-					while (window->pollEvent(evnt)) {
+					while (window2->pollEvent(evnt)) {
 
 						switch (evnt.type) {
 
 						case sf::Event::Closed:
-							window->close();
+							window2->close();
 							break;
 						}
 					}
 					if (sf::Keyboard::isKeyPressed(sf::Keyboard::Escape))
 					{
-						window->close();
+						window2->close();
 					}
 
 
-					window->clear();
-					window->draw(sprite12);
+					window2->clear();
+					window2->draw(sprite12);
 					
-					window->display();
+					window2->display();
 				}
 			}
 			

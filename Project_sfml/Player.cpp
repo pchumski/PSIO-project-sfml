@@ -14,7 +14,7 @@ Player::Player(sf::Texture* texture, sf::Vector2u imageCount, float switchTime, 
 
 	body.setSize(sf::Vector2f(128.0f, 128.0f));
 	//body.setOrigin(body.getSize() / 2.0f);
-	body.setPosition(3500.0f, 2300.0f);
+	body.setPosition(2675.0f, 3100.0f);
 	body.setTexture(texture);
 }
 

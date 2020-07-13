@@ -11,7 +11,7 @@ NewCharacter::NewCharacter(sf::Texture* texture, sf::Vector2u imageCount, float 
 
 	body.setSize(sf::Vector2f(130.0f, 130.0f));
 	//body.setOrigin(body.getSize() / 2.0f);
-	body.setPosition(3650.0f, 2300.0f);
+	body.setPosition(7800.0f, 390.0f);
 	body.setTexture(texture);
 }
 
